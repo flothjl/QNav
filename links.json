@@ -1,0 +1,26 @@
+[
+    {
+        "goLink": "google",
+        "url": "https://www.google.com"
+    },
+    {
+        "goLink": "os",
+        "url": "https://www.opensea.io"
+    },
+    {
+        "goLink": "youtube",
+        "url": "https://www.youtube.com"
+    },
+    {
+        "goLink": "ttv",
+        "url": "https://www.twitch.tv"
+    },
+    {
+        "goLink": "nas",
+        "url": "http://nas.thefloths.com/"
+    },
+    {
+        "goLink": "ubi",
+        "url": "http://ubi.thefloths.com/"
+    }
+]

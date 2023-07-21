@@ -1,0 +1,25 @@
+{
+  "name": "QNav",
+  "version": "1.0.0",
+  "description": "Quick Navigation built on web5",
+  "omnibox": {
+    "keyword": "nav"
+  },
+  "manifest_version": 3,
+  "author": "Josh Floth",
+  "background": {
+    "service_worker": "./src/pages/background/index.js",
+    "type": "module"
+  },
+  "permissions": ["webNavigation", "tabs"],
+  "action": {
+    "default_popup": "src/pages/popup/index.html",
+    "default_icon": "favicon-32x32.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+    "env": {
+      "__DEV__": "true"
+    },
+    "watch": [
+      "src", "utils", "vite.config.ts", "manifest.json"
+    ],
+    "ext": "tsx,css,html,ts,js",
+    "ignore": [
+      "src/**/*.spec.ts"
+    ],
+    "exec": "yarn build"
+  }
+  
