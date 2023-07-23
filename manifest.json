@@ -6,6 +6,9 @@
     "keyword": "nav"
   },
   "manifest_version": 3,
+  "icons": {
+    "16": "favicon-16x16.png"
+  },
   "author": "Josh Floth",
   "background": {
     "service_worker": "./src/pages/background/index.js",

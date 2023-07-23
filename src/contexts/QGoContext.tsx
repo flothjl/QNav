@@ -8,6 +8,7 @@ const QGoContext = createContext<QGoApi>({
   links: [],
   addLink: async () => {},
   queryLinks: async () => {},
+  deleteLink: async () => {},
 });
 
 export default QGoContext;

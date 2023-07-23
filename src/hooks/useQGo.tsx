@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { qGoProtocol as QGoProtocol } from "../protocols";
 import { useWeb5 } from "./useWeb5";
 import { QGoApi, QGoLink } from "../types";
@@ -31,6 +32,13 @@ export function useQGo(): QGoApi {
       },
     });
     await record?.record?.send(web5?.did || "");
+    toast.success("Link added!");
+  };
+
+  const deleteLink = async (link: any) => {
+    const updatedShowData = { ...link.data };
+    updatedShowData.isComplete = true;
+    await link.record.update({ data: updatedShowData });
   };
 
   return {
@@ -40,5 +48,6 @@ export function useQGo(): QGoApi {
     links,
     addLink,
     queryLinks,
+    deleteLink,
   };
 }

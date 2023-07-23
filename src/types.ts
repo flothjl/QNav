@@ -9,6 +9,7 @@ export type QGoLink = {
     name: string
     description?: string
     url: string
+    isDeleted: boolean
 }
 
 export type QGoLinkResponse = {
@@ -24,4 +25,5 @@ export type QGoApi = {
     links: QGoLinkResponse[]
     queryLinks: () => Promise<void>
     addLink: (value: QGoLink) => Promise<void>
+    deleteLink: (link: any) => Promise<void>
 }

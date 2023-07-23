@@ -1,4 +1,6 @@
 import { useRef, useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+
 import QGoContext from "../../contexts/QGoContext";
 import { useQGo } from "../../hooks/useQGo";
 import QGoRecords from "../../components/QGoRecords";
@@ -13,6 +15,7 @@ const App = () => {
     qGo?.addLink({
       name: nameRef.current?.value || "",
       url: urlRef.current?.value || "",
+      isDeleted: false
     });
   };
 
@@ -30,13 +33,11 @@ const App = () => {
     };
   }, [qGo.web5]);
 
-  useEffect(()=> {
-    getActiveTabUrl(
-      (url) => {
-        urlRef.current && (urlRef.current.value = url);
-      }
-    )
-  }, [urlRef.current])
+  useEffect(() => {
+    getActiveTabUrl((url) => {
+      urlRef.current && (urlRef.current.value = url);
+    });
+  }, [urlRef.current]);
 
   return (
     <QGoContext.Provider value={qGo}>
@@ -83,6 +84,18 @@ const App = () => {
               })}
             </QGoRecords>
           </div>
+          <ToastContainer
+            position="bottom-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
         </div>
       </div>
     </QGoContext.Provider>
