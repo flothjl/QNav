@@ -51,11 +51,7 @@ export async function linksRecordsQuery(web5: Web5) {
 }
 
 export async function connectWeb5() {
-  const web5: Web5Connection = await Web5.connect({
-    techPreview: {
-      dwnEndpoints: ["http://localhost:3000"],
-    },
-  });
+  const web5: Web5Connection = await Web5.connect({});
   web5.web5 && await configureProtocol(web5.web5, qGoProtocol);
   return web5;
 }
