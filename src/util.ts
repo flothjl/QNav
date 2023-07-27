@@ -66,3 +66,10 @@ export function getActiveTabUrl(callback: (url: string) => void) {
     }
   });
 }
+
+export const isValidUrl = (url: string): boolean => {
+  // Regular expression to match a valid URL pattern
+  const urlPattern = /^(https?:\/\/|chrome:\/\/|file:\/\/|ftp:\/\/|mailto:|tel:|data:)([a-z0-9\-]+\.)+[a-z]{2,}(\/.*)*$/i;
+
+  return urlPattern.test(url);
+};

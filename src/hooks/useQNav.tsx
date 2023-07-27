@@ -5,7 +5,7 @@ import { useWeb5 } from "./useWeb5";
 import { QGoApi, QGoLink } from "../types";
 import { linksRecordsQuery } from "../util";
 
-export function useQGo(): QGoApi {
+export function useQNav(): QGoApi {
   const [links, setLinks] = useState<any[]>([]);
 
   const { web5, isLoading, error } = useWeb5();
@@ -32,6 +32,7 @@ export function useQGo(): QGoApi {
       },
     });
     await record?.record?.send(web5?.did || "");
+    queryLinks();
     toast.success("Link added!");
   };
 

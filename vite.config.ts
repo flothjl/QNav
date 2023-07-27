@@ -9,6 +9,9 @@ const pagesDir = resolve(root, 'pages');
 const assetsDir = resolve(root, 'assets');
 const outDir = resolve(__dirname, 'dist');
 const publicDir = resolve(__dirname, 'public');
+const componentsDir = resolve(root, 'components');
+const contextsDir = resolve(root, 'contexts');
+const hooksDir = resolve(root, 'hooks');
 
 export default defineConfig({
   resolve: {
@@ -16,21 +19,25 @@ export default defineConfig({
       '@src': root,
       '@assets': assetsDir,
       '@pages': pagesDir,
+      '@components': componentsDir,
+      '@hooks': hooksDir,
+      '@contexts': contextsDir,
     },
   },
   plugins: [react()],
   publicDir,
   build: {
     outDir,
-    emptyOutDir: false,
+    emptyOutDir: true,
     target: 'esnext',
     rollupOptions: {
       input: {
         background: resolve(pagesDir, 'background', 'index.ts'),
-        popup: resolve(pagesDir, 'popup', 'index.html')
+        "popup/sandbox": resolve(pagesDir, 'popup', 'index.html'),
+        popup: resolve(pagesDir, 'popup', 'popup.html')
       },
       output: {
-        entryFileNames: (chunk) => `src/pages/${chunk.name}/index.js`,
+        entryFileNames: (chunk) => `src/pages/${chunk.name}/index.js`
       },
     },
   },

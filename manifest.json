@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Quick Navigation built on web5",
   "omnibox": {
-    "keyword": "nav"
+    "keyword": "go"
   },
   "manifest_version": 3,
   "icons": {
@@ -24,5 +24,9 @@
       "resources": ["assets/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "src/pages/popup/index.html",
+    "open_in_tab": true
+  }
 }

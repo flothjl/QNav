@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { QGoApi } from "../types";
 
-const QGoContext = createContext<QGoApi>({
+const QNavContext = createContext<QGoApi>({
   web5: null,
   isLoading: true,
   error: null,
@@ -11,4 +11,4 @@ const QGoContext = createContext<QGoApi>({
   deleteLink: async () => {},
 });
 
-export default QGoContext;
+export default QNavContext;

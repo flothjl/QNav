@@ -10,6 +10,9 @@ export default {
       colors: {
         primary: colors.slate,
         secondary: colors.cyan
+      },
+      spacing: {
+        '128': '32rem',
       }
     },
   },
