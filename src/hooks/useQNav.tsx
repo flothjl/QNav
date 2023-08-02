@@ -21,6 +21,17 @@ export function useQNav(): QGoApi {
     setLinks(recs);
   };
 
+  const queryFollowed = async () => {
+    const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
+    let recs: any[] = [];
+    for (const record of recordsRes?.records || []) {
+      const data = await record.data.json();
+      const id = record.id;
+      recs.push({ record, data, id });
+    }
+    setLinks(recs);
+  };
+
   const addLink = async (value: QGoLink) => {
     const record = await web5?.web5?.dwn.records.create({
       data: value,

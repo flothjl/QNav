@@ -28,3 +28,28 @@ export const qGoProtocol = {
     },
 };
 
+export const qGoFollowedProtocol = {
+    'protocol': "https://qgo.app/protocol",
+    'types': {
+        'qGoFollowed': {
+            'schema': "qGoFollowedSchema",
+            'dataFormats': ["application/json"],
+        }
+    },
+    'structure': {
+        'qGoFollowed': {
+            '$actions': [
+                {
+                    'who': 'anyone',
+                    'can': 'write'
+                },
+                {
+                    'who': 'author',
+                    'of': 'qGoLink',
+                    'can': 'read'
+                }
+            ]
+        }
+    },
+};
+

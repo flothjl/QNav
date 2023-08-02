@@ -50,6 +50,23 @@ export async function linksRecordsQuery(web5: Web5) {
   return recordsRes;
 }
 
+export async function followedRecordsQuery(web5: Web5) {
+  // Get records of followed dids and their links
+  const recordsRes = await web5.dwn.records.query({
+    message: {
+      filter: {
+        protocol: qGoProtocol.protocol,
+        schema: "qGoLinkSchema",
+        dataFormat: "application/json",
+      },
+      // TODO: import proper enum to avoid having to ts-ignore
+      // @ts-ignore
+      dateSort: "createdDescending",
+    },
+  });
+  return recordsRes;
+}
+
 export async function connectWeb5() {
   const web5: Web5Connection = await Web5.connect({});
   web5.web5 && await configureProtocol(web5.web5, qGoProtocol);

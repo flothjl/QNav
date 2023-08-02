@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import Root from "./Root";
 import Social from "@components/screens/Social";
+import Info from "@components/screens/Info";
 import Home from "@components/screens/Home";
 
 const App = () => {
@@ -16,6 +17,10 @@ const App = () => {
         {
           path: "/social",
           element: <Social />
+        },
+        {
+          path: "/info",
+          element: <Info/>
         },
         {
           path: "/",

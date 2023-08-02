@@ -1,9 +1,9 @@
-// import { HomeIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import {
-  HomeIcon as HomeIconFilled,
-  UserIcon as UserIconFilled,
-} from "@heroicons/react/24/solid";
+  HiHome as HomeIconFilled,
+  HiUser as UserIconFilled,
+  HiInformationCircle as InformationCircleIconFilled,
+} from "react-icons/hi2";
 import { NavLink } from "react-router-dom";
 
 const NavThumbBar = () => {
@@ -21,13 +21,22 @@ const NavThumbBar = () => {
       >
         <HomeIconFilled className="h-6 w-6" />
       </NavLink>
-      <NavLink
+      {/* TODO: add social tab to follow golinks */}
+      {/* <NavLink
         to="/social"
         className={({ isActive }) =>
           isActive ? clsx(navLinkClass, activeClass) : navLinkClass
         }
       >
         <UserIconFilled className="h-6 w-6" />
+      </NavLink> */}
+      <NavLink
+        to="/info"
+        className={({ isActive }) =>
+          isActive ? clsx(navLinkClass, activeClass) : navLinkClass
+        }
+      >
+        <InformationCircleIconFilled className="h-6 w-6" />
       </NavLink>
     </footer>
   );
