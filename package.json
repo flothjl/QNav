@@ -1,5 +1,5 @@
 {
-  "name": "qgo-chrome",
+  "name": "qnav-chrome",
   "version": "1.0.0",
   "description": "A lightweight chrome extension for quick navigation.",
   "main": "script.js",
