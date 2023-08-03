@@ -12,7 +12,7 @@ export function useQNav(): QGoApi {
   const queryLinks = async (): Promise<boolean> => {
     const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
     if(recordsRes?.status.code !== 200){
-      console.error('Unable to query links')
+      console.warn('Unable to query links')
       return false
     }
     let recs: any[] = [];
@@ -52,7 +52,7 @@ export function useQNav(): QGoApi {
     }
     const {status: sendStatus} = await record?.record?.send(web5?.did || "");
     if(sendStatus.code !== 202){
-      console.error('unable to send record to remote dwn')
+      console.warn('unable to send record to remote dwn')
     }
     queryLinks();
     return true;
@@ -63,7 +63,7 @@ export function useQNav(): QGoApi {
     updatedShowData.isComplete = true;
     const deleteRes = await link.record.update({ data: updatedShowData });
     if (deleteRes?.status.code !== 202) {
-      console.error("Unable to delete link");
+      console.warn("Unable to delete link");
       return false;
     }
     return true;
