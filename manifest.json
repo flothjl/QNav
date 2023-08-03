@@ -14,7 +14,7 @@
     "service_worker": "./src/pages/background/index.js",
     "type": "module"
   },
-  "permissions": ["webNavigation", "tabs"],
+  "permissions": ["tabs"],
   "action": {
     "default_popup": "src/pages/popup/index.html",
     "default_icon": "favicon-32x32.png"

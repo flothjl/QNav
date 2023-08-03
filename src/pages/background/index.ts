@@ -53,6 +53,25 @@ const suggestLink = (searchString: string, links: QGoLink[]) => {
 
 }
 
+function escapeXml(xmlString: string): string {
+  return xmlString.replace(/[<>&'"]/g, (char) => {
+    switch (char) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      case '"':
+        return '&quot;';
+      default:
+        return char;
+    }
+  });
+}
+
 const omniboxListener = async (web5: Web5Connection) => {
   chrome.omnibox.onInputChanged.addListener(async (text, sendSuggestion) => {
       const linkData = await queryLinks(web5);
@@ -61,7 +80,7 @@ const omniboxListener = async (web5: Web5Connection) => {
         recs.map((rec) => {
           return {
             content: rec.name,
-            description: `<dim><match>${rec.name}</match></dim> - <url>${rec.url}</url>`
+            description: `<dim><match>${rec.name}</match></dim> - <url>${escapeXml(rec.url || '')}</url>`
           }
         })
       )
@@ -76,26 +95,9 @@ const omniboxListener = async (web5: Web5Connection) => {
   });
 };
 
-const webNavigationHandler = async (web5: Web5Connection) => {
-  const linkData = await queryLinks(web5);
-  const links = linkData.map((link) => link.data);
-  chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-    const regexp = new RegExp("go%2F([a-zA-Z0-9_]*)");
-    const regexMatch = details.url.match(regexp);
-    if (regexMatch) {
-      const target = regexMatch[1];
-      const url = findLink(target, links);
-      if (url) {
-        chrome.tabs.update({ url });
-      }
-    }
-  });
-};
-
 
 
 connect().then(async (web5) => {
   await omniboxListener(web5);
-  await webNavigationHandler(web5);
 })
 
