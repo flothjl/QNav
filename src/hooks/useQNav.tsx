@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { qGoProtocol as QGoProtocol } from "../protocols";
 import { useWeb5 } from "./useWeb5";
 import { QGoApi, QGoLink } from "../types";
@@ -10,8 +9,12 @@ export function useQNav(): QGoApi {
 
   const { web5, isLoading, error } = useWeb5();
 
-  const queryLinks = async () => {
+  const queryLinks = async (): Promise<boolean> => {
     const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
+    if(recordsRes?.status.code !== 200){
+      console.error('Unable to query links')
+      return false
+    }
     let recs: any[] = [];
     for (const record of recordsRes?.records || []) {
       const data = await record.data.json();
@@ -19,6 +22,7 @@ export function useQNav(): QGoApi {
       recs.push({ record, data, id });
     }
     setLinks(recs);
+    return true
   };
 
   const queryFollowed = async () => {
@@ -32,7 +36,7 @@ export function useQNav(): QGoApi {
     setLinks(recs);
   };
 
-  const addLink = async (value: QGoLink) => {
+  const addLink = async (value: QGoLink): Promise<boolean> => {
     const record = await web5?.web5?.dwn.records.create({
       data: value,
       message: {
@@ -42,15 +46,27 @@ export function useQNav(): QGoApi {
         schema: "qGoLinkSchema",
       },
     });
-    await record?.record?.send(web5?.did || "");
+    console.log(record)
+    if (record?.status.code !== 202){
+      return false;
+    }
+    const {status: sendStatus} = await record?.record?.send(web5?.did || "");
+    if(sendStatus.code !== 202){
+      console.error('unable to send record to remote dwn')
+    }
     queryLinks();
-    toast.success("Link added!");
+    return true;
   };
 
-  const deleteLink = async (link: any) => {
+  const deleteLink = async (link: any): Promise<boolean> => {
     const updatedShowData = { ...link.data };
     updatedShowData.isComplete = true;
-    await link.record.update({ data: updatedShowData });
+    const deleteRes = await link.record.update({ data: updatedShowData });
+    if (deleteRes?.status.code !== 202) {
+      console.error("Unable to delete link");
+      return false;
+    }
+    return true;
   };
 
   return {

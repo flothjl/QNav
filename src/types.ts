@@ -23,7 +23,7 @@ export type QGoApi = {
     isLoading: boolean
     error: any
     links: QGoLinkResponse[]
-    queryLinks: () => Promise<void>
-    addLink: (value: QGoLink) => Promise<void>
-    deleteLink: (link: any) => Promise<void>
+    queryLinks: () => Promise<boolean>
+    addLink: (value: QGoLink) => Promise<boolean>
+    deleteLink: (link: any) => Promise<boolean>
 }
