@@ -12,7 +12,6 @@ export function useQNav(): QGoApi {
   const queryLinks = async (): Promise<boolean> => {
     const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
     if(recordsRes?.status.code !== 200){
-      console.warn('Unable to query links')
       return false
     }
     let recs: any[] = [];
