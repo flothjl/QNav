@@ -20,7 +20,6 @@ const queryLinks = async (web5: Web5Connection) => {
 
 // Function to calculate similarity score between two strings
 function calculateSimilarity(str1: string, str2: string) {
-  // You can use any similarity metric here. For simplicity, I'll use the Jaccard index.
   const set1 = new Set(str1.toLowerCase());
   const set2 = new Set(str2.toLowerCase());
   const intersectionSize = new Set([...set1].filter(x => set2.has(x))).size;
