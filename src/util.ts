@@ -1,6 +1,7 @@
 import { Web5 } from "@tbd54566975/web5";
-import { Web5Connection } from "./types";
+import { QGoLink, QGoLinkResponse, Web5Connection } from "./types";
 import { qGoProtocol } from "./protocols";
+import { RecordsQueryResponse } from "@tbd54566975/web5/dist/types/dwn-api";
 
 export async function configureProtocol(web5: Web5, protocolDefinition: any) {
   const { protocols, status } = await web5.dwn.protocols.query({
@@ -65,6 +66,18 @@ export async function followedRecordsQuery(web5: Web5) {
     },
   });
   return recordsRes;
+}
+
+export async function parseAndFilterLinkQueryRes(links: RecordsQueryResponse){
+  // Filter out deleted links and return a filtered list of data
+  let recs: QGoLinkResponse[] = [];
+
+  for (const record of links?.records || []) {
+    const data: QGoLink = await record.data.json();
+    const id = record.id;
+    data.isDeleted === false && recs.push({ record, data, id });
+  }
+  return recs
 }
 
 export async function connectWeb5() {

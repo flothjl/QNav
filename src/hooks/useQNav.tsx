@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { qGoProtocol as QGoProtocol } from "../protocols";
 import { useWeb5 } from "./useWeb5";
-import { QGoApi, QGoLink } from "../types";
-import { linksRecordsQuery } from "../util";
+import { QGoApi, QGoLink, QGoLinkResponse } from "../types";
+import { linksRecordsQuery, parseAndFilterLinkQueryRes } from "../util";
 
 export function useQNav(): QGoApi {
   const [links, setLinks] = useState<any[]>([]);
@@ -11,17 +11,13 @@ export function useQNav(): QGoApi {
 
   const queryLinks = async (): Promise<boolean> => {
     const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
-    if(recordsRes?.status.code !== 200){
-      return false
+    if (recordsRes?.status.code !== 200) {
+      // console.log('error getting records')
+      return false;
     }
-    let recs: any[] = [];
-    for (const record of recordsRes?.records || []) {
-      const data = await record.data.json();
-      const id = record.id;
-      recs.push({ record, data, id });
-    }
+    let recs: QGoLinkResponse[] = await parseAndFilterLinkQueryRes(recordsRes);
     setLinks(recs);
-    return true
+    return true;
   };
 
   const queryFollowed = async () => {
@@ -45,13 +41,13 @@ export function useQNav(): QGoApi {
         schema: "qGoLinkSchema",
       },
     });
-    console.log(record)
-    if (record?.status.code !== 202){
+    console.log(record);
+    if (record?.status.code !== 202) {
       return false;
     }
-    const {status: sendStatus} = await record?.record?.send(web5?.did || "");
-    if(sendStatus.code !== 202){
-      console.warn('unable to send record to remote dwn')
+    const { status: sendStatus } = await record?.record?.send(web5?.did || "");
+    if (sendStatus.code !== 202) {
+      console.warn("unable to send record to remote dwn");
     }
     queryLinks();
     return true;
@@ -59,12 +55,14 @@ export function useQNav(): QGoApi {
 
   const deleteLink = async (link: any): Promise<boolean> => {
     const updatedShowData = { ...link.data };
-    updatedShowData.isComplete = true;
+    updatedShowData.isDeleted = true;
     const deleteRes = await link.record.update({ data: updatedShowData });
     if (deleteRes?.status.code !== 202) {
       console.warn("Unable to delete link");
+      console.log(deleteRes);
       return false;
     }
+    queryLinks();
     return true;
   };
 

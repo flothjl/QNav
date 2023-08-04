@@ -69,8 +69,7 @@ const Home = () => {
             return (
               <QNavRecords.Item
                 key={i}
-                url={link.data.url}
-                name={link.data.name}
+                link={link}
               />
             );
           })}
