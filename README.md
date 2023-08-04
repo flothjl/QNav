@@ -8,3 +8,6 @@ Initiate QNav by typing `nav` followed by a space
 1. clone this repo
 2. Inside the directory run `yarn build`
 3. Within "Manage Extensions" in Chrome, select "Load Unpacked" and select the `dist` directory within this project
+
+
+![QNav](screenshot2.png "QNav")
