@@ -11,4 +11,4 @@ Navigate to any link by typing `go <link name>` in the address bar
 
 
 ![QNav](screenshot2.png "QNav")
-![QNav](screenshot3.png "QNav")
+![QNavAddressBar](screenshot3.png "QNavAddressBar")
