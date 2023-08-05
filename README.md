@@ -1,7 +1,7 @@
 # QNav Links
 A lightweight chrome extension for quick navigation. This extension leverages chrome's omnibox feature and allows users to save important or highly used sites and easily navigate to them.
 
-Initiate QNav by typing `go` followed by a space
+Navigate to any link by typing `go <link name>` in the address bar
 
 ## Installation
 
@@ -11,3 +11,4 @@ Initiate QNav by typing `go` followed by a space
 
 
 ![QNav](screenshot2.png "QNav")
+![QNav](screenshot3.png "QNav")
