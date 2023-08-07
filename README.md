@@ -6,7 +6,7 @@ Navigate to any link by typing `go <link name>` in the address bar
 ## Installation
 
 1. clone this repo
-2. Inside the directory run `yarn build`
+2. Inside the directory run `yarn install && yarn build`
 3. Within "Manage Extensions" in Chrome, select "Load Unpacked" and select the `dist` directory within this project
 
 
