@@ -13,6 +13,7 @@ import {
   followRecordsQuery,
   linksRecordsQuery,
   filterLinkQueryRes,
+  queryAllLinks,
 } from "../util";
 
 export function useQNav(): QGoApi {
@@ -22,26 +23,11 @@ export function useQNav(): QGoApi {
   const { web5, isLoading, error } = useWeb5();
 
   const queryLinks = async (): Promise<boolean> => {
-    const followsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
-    const recordsRes = web5?.web5 && (await linksRecordsQuery(web5.web5));
-    if (recordsRes?.status.code !== 200) {
+    const links = web5?.web5 && (await queryAllLinks(web5?.web5));
+    if (links?.status.code !== 200) {
       return false;
     }
-
-    let recs: QGoLinkResponse[] = recordsRes.recs;
-
-    for (const follow of followsRes?.recs || []) {
-      const recordsRes =
-        web5?.web5 && (await linksRecordsQuery(web5.web5, follow.data.did));
-      if (recordsRes?.status.code !== 200) {
-        console.log(`unable to get links for followed DID: ${follow.data.did}`);
-        continue;
-      }
-      recs = [...recs, ...recordsRes.recs];
-    }
-
-    recs = await filterLinkQueryRes(recs);
-    setLinks(recs);
+    setLinks(links.recs || []);
     return true;
   };
 

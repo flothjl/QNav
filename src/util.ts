@@ -26,6 +26,14 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
   console.log("configure protocol status", configureStatus);
 }
 
+
+/**
+ * Queries all links for connected user.
+ *
+ * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @param {any} from - The DID to query links from (optional).
+ * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
+ */
 export async function linksRecordsQuery(web5: Web5, from?: string): Promise<{ status: any, recs: QGoLinkResponse[] }> {
   const recordsRes = await web5.dwn.records.query({
     from,
@@ -49,6 +57,40 @@ export async function linksRecordsQuery(web5: Web5, from?: string): Promise<{ st
   return { status: recordsRes.status, recs };
 }
 
+/**
+ * Queries all links for connected user and all followed dids.
+ *
+ * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
+ */
+export async function queryAllLinks(web5: Web5): Promise<{ status: any, recs: QGoLinkResponse[] }> {
+
+  const followsRes = web5 && (await followRecordsQuery(web5));
+  const recordsRes = web5 && (await linksRecordsQuery(web5));
+
+  let recs: QGoLinkResponse[] = recordsRes.recs;
+
+  for (const follow of followsRes?.recs || []) {
+    const recordsRes =
+      web5 && (await linksRecordsQuery(web5, follow.data.did));
+    if (recordsRes?.status.code !== 200) {
+      console.log(`unable to get links for followed DID: ${follow.data.did}`);
+      continue;
+    }
+    recs = [...recs, ...recordsRes.recs];
+  }
+
+  recs = await filterLinkQueryRes(recs);
+
+  return { status: recordsRes.status, recs };
+}
+
+/**
+ * Queries all followed dids for connected user.
+ *
+ * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @returns {Promise<{status: any, recs: QGoFollowsResponse[]}>}
+ */
 export async function followRecordsQuery(web5: Web5): Promise<{ status: any, recs: QGoFollowsResponse[] }> {
   // Get records of followed dids and their links
   const recordsRes = await web5.dwn.records.query({

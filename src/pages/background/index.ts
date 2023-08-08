@@ -1,32 +1,19 @@
-import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes, followRecordsQuery } from "@src/util";
+import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes, followRecordsQuery, queryAllLinks } from "@src/util";
 import { qGoProtocol } from "../../protocols";
 import { QGoLink, QGoLinkResponse, Web5Connection } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
   const web5 = await connectWeb5();
-  web5.web5 && await configureProtocol(web5.web5, qGoProtocol);
   return web5;
 };
 
 const queryLinks = async (web5: Web5Connection) => {
-  const followsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
-  const recordsRes = web5?.web5 && (await linksRecordsQuery(web5.web5));
-
-  let recs: QGoLinkResponse[] = recordsRes?.recs || [];
-
-  for (const follow of followsRes?.recs || []) {
-    const recordsRes =
-      web5?.web5 && (await linksRecordsQuery(web5.web5, follow.data.did));
-    if (recordsRes?.status.code !== 200) {
-      console.log(`unable to get links for followed DID: ${follow.data.did}`);
-      continue;
-    }
-    recs = [...recs, ...recordsRes.recs];
+  const links = web5?.web5 && (await queryAllLinks(web5.web5));
+  if (links?.status.code !== 200) {
+    console.log("Failed to query links", links?.status);
   }
-
-  recs = await filterLinkQueryRes(recs);
-  return recs;
+  return links?.recs || [];
 };
 
 // Function to calculate similarity score between two strings
