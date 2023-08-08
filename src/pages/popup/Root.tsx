@@ -2,7 +2,7 @@ import { ToastContainer } from "react-toastify";
 
 import QNavContext from "@contexts/QNavContext";
 import { useQNav } from "@hooks/useQNav";
-import NavThumbBar from "@components/molecules/NavThumbBar";
+import NavBar from "@components/molecules/NavBar";
 import { Outlet } from "react-router-dom";
 
 const Root = () => {
@@ -20,7 +20,7 @@ const Root = () => {
           <main className="h-screen overflow-y-scroll pb-20 pt-14">
             <Outlet />
           </main>
-          <NavThumbBar />
+          <NavBar />
         </div>
       </QNavContext.Provider>
       <ToastContainer

@@ -4,6 +4,10 @@ export const qGoProtocol = {
         'qGoLink': {
             'schema': "qGoLinkSchema",
             'dataFormats': ["application/json"],
+        },
+        'qGoFollow': {
+            'schema': "qGoFollowSchema",
+            'dataFormats': ["application/json"],
         }
     },
     'structure': {
@@ -24,20 +28,8 @@ export const qGoProtocol = {
                     'can': 'read'
                 }
             ]
-        }
-    },
-};
-
-export const qGoFollowedProtocol = {
-    'protocol': "https://qgo.app/protocol",
-    'types': {
-        'qGoFollowed': {
-            'schema': "qGoFollowedSchema",
-            'dataFormats': ["application/json"],
-        }
-    },
-    'structure': {
-        'qGoFollowed': {
+        },
+        'qGoFollow': {
             '$actions': [
                 {
                     'who': 'anyone',
@@ -45,11 +37,10 @@ export const qGoFollowedProtocol = {
                 },
                 {
                     'who': 'author',
-                    'of': 'qGoLink',
+                    'of': 'qGoFollow',
                     'can': 'read'
                 }
             ]
         }
     },
 };
-

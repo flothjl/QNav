@@ -1,7 +1,6 @@
 import { Web5 } from "@tbd54566975/web5";
-import { QGoLink, QGoLinkResponse, Web5Connection } from "./types";
+import { QGoLinkResponse, Web5Connection } from "./types";
 import { qGoProtocol } from "./protocols";
-import { RecordsQueryResponse } from "@tbd54566975/web5/dist/types/dwn-api";
 
 export async function configureProtocol(web5: Web5, protocolDefinition: any) {
   const { protocols, status } = await web5.dwn.protocols.query({
@@ -51,13 +50,13 @@ export async function linksRecordsQuery(web5: Web5) {
   return recordsRes;
 }
 
-export async function followedRecordsQuery(web5: Web5) {
+export async function followRecordsQuery(web5: Web5) {
   // Get records of followed dids and their links
   const recordsRes = await web5.dwn.records.query({
     message: {
       filter: {
         protocol: qGoProtocol.protocol,
-        schema: "qGoLinkSchema",
+        schema: "qGoFollowSchema",
         dataFormat: "application/json",
       },
       // TODO: import proper enum to avoid having to ts-ignore
@@ -68,14 +67,25 @@ export async function followedRecordsQuery(web5: Web5) {
   return recordsRes;
 }
 
-export async function parseAndFilterLinkQueryRes(links: RecordsQueryResponse){
-  // Filter out deleted links and return a filtered list of data
+export async function deleteRecord(web5: Web5, recordId: string) {
+  const record = await web5.dwn.records.delete({
+    message: {
+      recordId,
+    },
+  });
+  console.log(record);
+  if (record?.status.code !== 202) {
+    return false;
+  }
+  return true;
+}
+
+export async function filterLinkQueryRes(links: QGoLinkResponse[]) {
+  // Filter out deleted links and return a filtered list of data. Right now not used.
   let recs: QGoLinkResponse[] = [];
 
-  for (const record of links?.records || []) {
-    const data: QGoLink = await record.data.json();
-    const id = record.id;
-    data.isDeleted === false && recs.push({ record, data, id });
+  for (const link of links) {
+    recs.push(link);
   }
   return recs
 }
@@ -103,3 +113,9 @@ export const isValidUrl = (url: string): boolean => {
 
   return urlPattern.test(url);
 };
+
+export const isValidDid = (did: string): boolean => {
+  // regex from https://github.com/TBD54566975/web5-js/blob/72facd44f0d70c3a9dc5f89719cadc51220fb8ce/packages/dids/src/utils.ts#L11
+  const didRegex = /^did:([a-z0-9]+):((?:(?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))*:)*((?:[a-zA-Z0-9._-]|(?:%[0-9a-fA-F]{2}))+))((;[a-zA-Z0-9_.:%-]+=[a-zA-Z0-9_.:%-]*)*)(\/[^#?]*)?([?][^#]*)?(#.*)?$/;
+  return didRegex.test(did);
+}

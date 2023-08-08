@@ -1,34 +1,76 @@
 import { useState } from "react";
-import { qGoProtocol as QGoProtocol } from "../protocols";
+import { qGoProtocol } from "../protocols";
 import { useWeb5 } from "./useWeb5";
-import { QGoApi, QGoLink, QGoLinkResponse } from "../types";
-import { linksRecordsQuery, parseAndFilterLinkQueryRes } from "../util";
+import {
+  QGoApi,
+  QGoFollow,
+  QGoFollowsResponse,
+  QGoLink,
+  QGoLinkResponse,
+} from "../types";
+import {
+  deleteRecord,
+  followRecordsQuery,
+  linksRecordsQuery,
+  filterLinkQueryRes,
+} from "../util";
 
 export function useQNav(): QGoApi {
   const [links, setLinks] = useState<any[]>([]);
+  const [follows, setFollows] = useState<any[]>([]);
 
   const { web5, isLoading, error } = useWeb5();
 
   const queryLinks = async (): Promise<boolean> => {
-    const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
+    const recordsRes = web5?.web5 && (await linksRecordsQuery(web5.web5));
     if (recordsRes?.status.code !== 200) {
-      // console.log('error getting records')
       return false;
     }
-    let recs: QGoLinkResponse[] = await parseAndFilterLinkQueryRes(recordsRes);
+    let recs: QGoLinkResponse[] = [];
+    for (const record of recordsRes?.records || []) {
+      const data: QGoLink = await record.data.json();
+      const id = record.id;
+      recs.push({ record, data, id });
+    }
+    recs = await filterLinkQueryRes(recs);
     setLinks(recs);
     return true;
   };
 
-  const queryFollowed = async () => {
-    const recordsRes = web5?.web5 && (await linksRecordsQuery(web5?.web5));
-    let recs: any[] = [];
+  const queryFollows = async () => {
+    const recordsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
+    if (recordsRes?.status.code !== 200) {
+      return false;
+    }
+    let recs: QGoFollowsResponse[] = [];
     for (const record of recordsRes?.records || []) {
-      const data = await record.data.json();
+      const data: QGoFollow = await record.data.json();
       const id = record.id;
       recs.push({ record, data, id });
     }
-    setLinks(recs);
+    setFollows(recs);
+    return true;
+  };
+
+  const addFollow = async (data: QGoFollow) => {
+    const record = await web5?.web5?.dwn.records.create({
+      data,
+      message: {
+        dataFormat: "application/json",
+        protocol: qGoProtocol.protocol,
+        protocolPath: "qGoFollow",
+        schema: "qGoFollowSchema",
+      },
+    });
+    if (record?.status.code !== 202) {
+      return false;
+    }
+    const { status: sendStatus } = await record?.record?.send(web5?.did || "");
+    if (sendStatus.code !== 202) {
+      console.warn("unable to send record to remote dwn");
+    }
+    queryFollows();
+    return true;
   };
 
   const addLink = async (value: QGoLink): Promise<boolean> => {
@@ -36,7 +78,7 @@ export function useQNav(): QGoApi {
       data: value,
       message: {
         dataFormat: "application/json",
-        protocol: QGoProtocol.protocol,
+        protocol: qGoProtocol.protocol,
         protocolPath: "qGoLink",
         schema: "qGoLinkSchema",
       },
@@ -53,17 +95,16 @@ export function useQNav(): QGoApi {
     return true;
   };
 
-  const deleteLink = async (link: any): Promise<boolean> => {
-    const updatedShowData = { ...link.data };
-    updatedShowData.isDeleted = true;
-    const deleteRes = await link.record.update({ data: updatedShowData });
-    if (deleteRes?.status.code !== 202) {
-      console.warn("Unable to delete link");
-      console.log(deleteRes);
-      return false;
-    }
+  const deleteLink = async (link: QGoLinkResponse): Promise<boolean> => {
+    const isSuccess = web5?.web5 && (await deleteRecord(web5.web5, link.id));
     queryLinks();
-    return true;
+    return isSuccess || false;
+  };
+
+  const deleteFollow = async (link: QGoFollowsResponse): Promise<boolean> => {
+    const isSuccess = web5?.web5 && (await deleteRecord(web5.web5, link.id));
+    queryFollows();
+    return isSuccess || false;
   };
 
   return {
@@ -71,8 +112,12 @@ export function useQNav(): QGoApi {
     isLoading,
     error,
     links,
+    follows,
     addLink,
     queryLinks,
     deleteLink,
+    deleteFollow,
+    queryFollows,
+    addFollow,
   };
 }

@@ -1,4 +1,4 @@
-import { connectWeb5, configureProtocol, linksRecordsQuery, parseAndFilterLinkQueryRes } from "@src/util";
+import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes } from "@src/util";
 import { qGoProtocol } from "../../protocols";
 import { QGoLink, QGoLinkResponse, Web5Connection } from "../../types";
 import { findLink } from "./util";
@@ -13,7 +13,12 @@ const queryLinks = async (web5: Web5Connection) => {
   let recs: QGoLinkResponse[] = [];
   const recordsRes = web5.web5 && await linksRecordsQuery(web5.web5);
   if(recordsRes){
-    recs = await parseAndFilterLinkQueryRes(recordsRes);
+    for (const record of recordsRes?.records || []) {
+      const data: QGoLink = await record.data.json();
+      const id = record.id;
+      recs.push({ record, data, id });
+    }
+    recs = await filterLinkQueryRes(recs);
   }
   return recs;
 };

@@ -9,21 +9,32 @@ export type QGoLink = {
     name: string
     description?: string
     url: string
-    isDeleted: boolean
 }
 
-export type QGoLinkResponse = {
-    data: QGoLink
+export type QGoFollow = {
+    did: string
+    nickname?: string
+}
+
+export type BaseRecordResponse<T> = {
+    data: T
     id: string
     record: any
 }
+
+export type QGoLinkResponse = BaseRecordResponse<QGoLink>
+export type QGoFollowsResponse = BaseRecordResponse<QGoFollow>
 
 export type QGoApi = {
     web5: Web5Connection | null
     isLoading: boolean
     error: any
     links: QGoLinkResponse[]
+    follows: QGoFollowsResponse[]
     queryLinks: () => Promise<boolean>
     addLink: (value: QGoLink) => Promise<boolean>
     deleteLink: (link: any) => Promise<boolean>
+    addFollow: (data: QGoFollow) => Promise<boolean>
+    deleteFollow: (follow: any) => Promise<boolean>
+    queryFollows: () => Promise<boolean>
 }

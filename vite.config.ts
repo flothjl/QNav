@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite'
-import copy from 'rollup-plugin-copy';
 import react from '@vitejs/plugin-react'
 
 
@@ -33,8 +32,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(pagesDir, 'background', 'index.ts'),
-        "popup/sandbox": resolve(pagesDir, 'popup', 'index.html'),
-        popup: resolve(pagesDir, 'popup', 'popup.html')
+        "popup/sandbox": resolve(pagesDir, 'popup', 'index.html')
       },
       output: {
         entryFileNames: (chunk) => `src/pages/${chunk.name}/index.js`

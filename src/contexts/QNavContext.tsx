@@ -6,9 +6,25 @@ const QNavContext = createContext<QGoApi>({
   isLoading: true,
   error: null,
   links: [],
-  addLink: async () => {return false},
-  queryLinks: async () => {return false},
-  deleteLink: async () => {return false},
+  follows: [],
+  addLink: async () => {
+    return false;
+  },
+  queryLinks: async () => {
+    return false;
+  },
+  deleteLink: async () => {
+    return false;
+  },
+  addFollow: async () => {
+    return false;
+  },
+  queryFollows: async () => {
+    return false;
+  },
+  deleteFollow: async () => {
+    return false;
+  },
 });
 
 export default QNavContext;
