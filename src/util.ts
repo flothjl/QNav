@@ -16,12 +16,6 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
     return;
   }
 
-  // protocol already exists
-  if (protocols.length > 0) {
-    console.log("protocol already exists");
-    return;
-  }
-
   // create protocol
   const { status: configureStatus } = await web5.dwn.protocols.configure({
     message: {

@@ -65,6 +65,7 @@ export function useQNav(): QGoApi {
       },
     });
     if (record?.status.code !== 202) {
+      console.log(record)
       return false;
     }
     const { status: sendStatus } = await record?.record?.send(web5?.did || "");
