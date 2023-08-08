@@ -65,7 +65,6 @@ export function useQNav(): QGoApi {
       },
     });
     if (record?.status.code !== 202) {
-      console.log(record)
       return false;
     }
     const { status: sendStatus } = await record?.record?.send(web5?.did || "");
@@ -86,7 +85,6 @@ export function useQNav(): QGoApi {
         schema: "qGoLinkSchema",
       },
     });
-    console.log(record);
     if (record?.status.code !== 202) {
       return false;
     }

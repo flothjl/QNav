@@ -42,8 +42,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('querying links')
-    console.log(qNav.follows)
     const makeQueries = async () => {
       qNav.queryLinks();
     };
