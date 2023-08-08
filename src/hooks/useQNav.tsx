@@ -16,39 +16,41 @@ import {
 } from "../util";
 
 export function useQNav(): QGoApi {
-  const [links, setLinks] = useState<any[]>([]);
-  const [follows, setFollows] = useState<any[]>([]);
+  const [links, setLinks] = useState<QGoLinkResponse[]>([]);
+  const [follows, setFollows] = useState<QGoFollowsResponse[]>([]);
 
   const { web5, isLoading, error } = useWeb5();
 
   const queryLinks = async (): Promise<boolean> => {
+    const followsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
     const recordsRes = web5?.web5 && (await linksRecordsQuery(web5.web5));
     if (recordsRes?.status.code !== 200) {
       return false;
     }
-    let recs: QGoLinkResponse[] = [];
-    for (const record of recordsRes?.records || []) {
-      const data: QGoLink = await record.data.json();
-      const id = record.id;
-      recs.push({ record, data, id });
+
+    let recs: QGoLinkResponse[] = recordsRes.recs;
+
+    for (const follow of followsRes?.recs || []) {
+      const recordsRes =
+        web5?.web5 && (await linksRecordsQuery(web5.web5, follow.data.did));
+      if (recordsRes?.status.code !== 200) {
+        console.log(`unable to get links for followed DID: ${follow.data.did}`);
+        continue;
+      }
+      recs = [...recs, ...recordsRes.recs];
     }
+
     recs = await filterLinkQueryRes(recs);
     setLinks(recs);
     return true;
   };
 
   const queryFollows = async () => {
-    const recordsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
-    if (recordsRes?.status.code !== 200) {
+    const follows = web5?.web5 && (await followRecordsQuery(web5.web5));
+    if (follows?.status.code !== 200) {
       return false;
     }
-    let recs: QGoFollowsResponse[] = [];
-    for (const record of recordsRes?.records || []) {
-      const data: QGoFollow = await record.data.json();
-      const id = record.id;
-      recs.push({ record, data, id });
-    }
-    setFollows(recs);
+    setFollows(follows?.recs || []);
     return true;
   };
 

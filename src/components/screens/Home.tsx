@@ -42,12 +42,14 @@ const Home = () => {
   };
 
   useEffect(() => {
+    console.log('querying links')
+    console.log(qNav.follows)
     const makeQueries = async () => {
       qNav.queryLinks();
     };
     if (!qNav.web5) return;
     makeQueries();
-  }, [qNav.web5]);
+  }, [qNav.web5, qNav.follows]);
 
   useEffect(() => {
     getActiveTabUrl((url) => {

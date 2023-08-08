@@ -1,4 +1,4 @@
-import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes } from "@src/util";
+import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes, followRecordsQuery } from "@src/util";
 import { qGoProtocol } from "../../protocols";
 import { QGoLink, QGoLinkResponse, Web5Connection } from "../../types";
 import { findLink } from "./util";
@@ -10,16 +10,22 @@ const connect = async () => {
 };
 
 const queryLinks = async (web5: Web5Connection) => {
-  let recs: QGoLinkResponse[] = [];
-  const recordsRes = web5.web5 && await linksRecordsQuery(web5.web5);
-  if(recordsRes){
-    for (const record of recordsRes?.records || []) {
-      const data: QGoLink = await record.data.json();
-      const id = record.id;
-      recs.push({ record, data, id });
+  const followsRes = web5?.web5 && (await followRecordsQuery(web5.web5));
+  const recordsRes = web5?.web5 && (await linksRecordsQuery(web5.web5));
+
+  let recs: QGoLinkResponse[] = recordsRes?.recs || [];
+
+  for (const follow of followsRes?.recs || []) {
+    const recordsRes =
+      web5?.web5 && (await linksRecordsQuery(web5.web5, follow.data.did));
+    if (recordsRes?.status.code !== 200) {
+      console.log(`unable to get links for followed DID: ${follow.data.did}`);
+      continue;
     }
-    recs = await filterLinkQueryRes(recs);
+    recs = [...recs, ...recordsRes.recs];
   }
+
+  recs = await filterLinkQueryRes(recs);
   return recs;
 };
 

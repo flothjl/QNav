@@ -1,5 +1,5 @@
 import { Web5 } from "@tbd54566975/web5";
-import { QGoLinkResponse, Web5Connection } from "./types";
+import { QGoLinkResponse, QGoFollowsResponse, QGoFollow, QGoLink, Web5Connection } from "./types";
 import { qGoProtocol } from "./protocols";
 
 export async function configureProtocol(web5: Web5, protocolDefinition: any) {
@@ -12,9 +12,7 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
   });
 
   if (status.code !== 200) {
-    alert("Failed to query protocols. check console");
     console.error("Failed to query protocols", status);
-
     return;
   }
 
@@ -34,8 +32,9 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
   console.log("configure protocol status", configureStatus);
 }
 
-export async function linksRecordsQuery(web5: Web5) {
+export async function linksRecordsQuery(web5: Web5, from?: string): Promise<{ status: any, recs: QGoLinkResponse[] }> {
   const recordsRes = await web5.dwn.records.query({
+    from,
     message: {
       filter: {
         protocol: qGoProtocol.protocol,
@@ -47,10 +46,16 @@ export async function linksRecordsQuery(web5: Web5) {
       dateSort: "createdDescending",
     },
   });
-  return recordsRes;
+  let recs: QGoLinkResponse[] = [];
+  for (const record of recordsRes?.records || []) {
+    const data: QGoLink = await record.data.json();
+    const id = record.id;
+    recs.push({ record, data, id });
+  }
+  return { status: recordsRes.status, recs };
 }
 
-export async function followRecordsQuery(web5: Web5) {
+export async function followRecordsQuery(web5: Web5): Promise<{ status: any, recs: QGoFollowsResponse[] }> {
   // Get records of followed dids and their links
   const recordsRes = await web5.dwn.records.query({
     message: {
@@ -64,7 +69,16 @@ export async function followRecordsQuery(web5: Web5) {
       dateSort: "createdDescending",
     },
   });
-  return recordsRes;
+  let recs: QGoFollowsResponse[] = [];
+  for (const record of recordsRes?.records || []) {
+    const data: QGoFollow = await record.data.json();
+    const id = record.id;
+    recs.push({ record, data, id });
+  }
+  return {
+    status: recordsRes.status,
+    recs
+  };
 }
 
 export async function deleteRecord(web5: Web5, recordId: string) {
