@@ -1,6 +1,5 @@
-import { connectWeb5, configureProtocol, linksRecordsQuery, filterLinkQueryRes, followRecordsQuery, queryAllLinks } from "@src/util";
-import { qGoProtocol } from "../../protocols";
-import { QGoLink, QGoLinkResponse, Web5Connection } from "../../types";
+import { connectWeb5, queryAllLinks } from "@src/util";
+import { QGoLink, Web5Connection } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
@@ -9,7 +8,7 @@ const connect = async () => {
 };
 
 const queryLinks = async (web5: Web5Connection) => {
-  const links = web5?.web5 && (await queryAllLinks(web5.web5));
+  const links = await queryAllLinks(web5);
   if (links?.status.code !== 200) {
     console.log("Failed to query links", links?.status);
   }

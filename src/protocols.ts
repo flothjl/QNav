@@ -1,5 +1,5 @@
 export const qGoProtocol = {
-    'protocol': "https://qgo.app/protocol",
+    'protocol': "qnav",
     'types': {
         'qGoLink': {
             'schema': "qGoLinkSchema",

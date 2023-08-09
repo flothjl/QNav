@@ -1,8 +1,9 @@
 import { Web5 } from "@tbd54566975/web5";
+import { Record } from "@tbd54566975/web5/dist/types/record";
 
 export type Web5Connection = {
-    web5?: Web5;
-    did?: string;
+    web5: Web5;
+    did: string;
 };
 
 export type QGoLink = {
@@ -19,7 +20,7 @@ export type QGoFollow = {
 export type BaseRecordResponse<T> = {
     data: T
     id: string
-    record: any
+    record: Record
 }
 
 export type QGoLinkResponse = BaseRecordResponse<QGoLink>

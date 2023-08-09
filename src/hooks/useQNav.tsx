@@ -8,13 +8,7 @@ import {
   QGoLink,
   QGoLinkResponse,
 } from "../types";
-import {
-  deleteRecord,
-  followRecordsQuery,
-  linksRecordsQuery,
-  filterLinkQueryRes,
-  queryAllLinks,
-} from "../util";
+import { deleteRecord, followRecordsQuery, queryAllLinks } from "../util";
 
 export function useQNav(): QGoApi {
   const [links, setLinks] = useState<QGoLinkResponse[]>([]);
@@ -23,7 +17,7 @@ export function useQNav(): QGoApi {
   const { web5, isLoading, error } = useWeb5();
 
   const queryLinks = async (): Promise<boolean> => {
-    const links = web5?.web5 && (await queryAllLinks(web5?.web5));
+    const links = web5 && (await queryAllLinks(web5));
     if (links?.status.code !== 200) {
       return false;
     }
@@ -32,7 +26,7 @@ export function useQNav(): QGoApi {
   };
 
   const queryFollows = async () => {
-    const follows = web5?.web5 && (await followRecordsQuery(web5.web5));
+    const follows = web5 && (await followRecordsQuery(web5));
     if (follows?.status.code !== 200) {
       return false;
     }
@@ -41,7 +35,7 @@ export function useQNav(): QGoApi {
   };
 
   const addFollow = async (data: QGoFollow) => {
-    const record = await web5?.web5?.dwn.records.create({
+    const record = await web5?.web5.dwn.records.create({
       data,
       message: {
         dataFormat: "application/json",
@@ -62,7 +56,7 @@ export function useQNav(): QGoApi {
   };
 
   const addLink = async (value: QGoLink): Promise<boolean> => {
-    const record = await web5?.web5?.dwn.records.create({
+    const record = await web5?.web5.dwn.records.create({
       data: value,
       message: {
         dataFormat: "application/json",
@@ -83,13 +77,13 @@ export function useQNav(): QGoApi {
   };
 
   const deleteLink = async (link: QGoLinkResponse): Promise<boolean> => {
-    const isSuccess = web5?.web5 && (await deleteRecord(web5.web5, link.id));
+    const isSuccess = web5 && (await deleteRecord(web5, link.id));
     queryLinks();
     return isSuccess || false;
   };
 
   const deleteFollow = async (link: QGoFollowsResponse): Promise<boolean> => {
-    const isSuccess = web5?.web5 && (await deleteRecord(web5.web5, link.id));
+    const isSuccess = web5 && (await deleteRecord(web5, link.id));
     queryFollows();
     return isSuccess || false;
   };

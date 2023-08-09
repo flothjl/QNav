@@ -16,6 +16,12 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
     return;
   }
 
+  // protocol already exists
+  if (protocols.length > 0) {
+    console.log("protocol already exists");
+    return;
+  }
+
   // create protocol
   const { status: configureStatus } = await web5.dwn.protocols.configure({
     message: {
@@ -30,12 +36,12 @@ export async function configureProtocol(web5: Web5, protocolDefinition: any) {
 /**
  * Queries all links for connected user.
  *
- * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
  * @param {any} from - The DID to query links from (optional).
  * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
  */
-export async function linksRecordsQuery(web5: Web5, from?: string): Promise<{ status: any, recs: QGoLinkResponse[] }> {
-  const recordsRes = await web5.dwn.records.query({
+export async function linksRecordsQuery(web5Connection: Web5Connection, from?: string): Promise<{ status: any, recs: QGoLinkResponse[] }> {
+  const recordsRes = await web5Connection.web5.dwn.records.query({
     from,
     message: {
       filter: {
@@ -60,27 +66,25 @@ export async function linksRecordsQuery(web5: Web5, from?: string): Promise<{ st
 /**
  * Queries all links for connected user and all followed dids.
  *
- * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
  * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
  */
-export async function queryAllLinks(web5: Web5): Promise<{ status: any, recs: QGoLinkResponse[] }> {
+export async function queryAllLinks(web5Connection: Web5Connection): Promise<{ status: any, recs: QGoLinkResponse[] }> {
 
-  const followsRes = web5 && (await followRecordsQuery(web5));
-  const recordsRes = web5 && (await linksRecordsQuery(web5));
+  const followsRes = await followRecordsQuery(web5Connection);
+  const recordsRes = await linksRecordsQuery(web5Connection);
 
   let recs: QGoLinkResponse[] = recordsRes.recs;
 
   for (const follow of followsRes?.recs || []) {
-    const recordsRes =
-      web5 && (await linksRecordsQuery(web5, follow.data.did));
+    const recordsRes = await linksRecordsQuery(web5Connection, follow.data.did);
     if (recordsRes?.status.code !== 200) {
       console.log(`unable to get links for followed DID: ${follow.data.did}`);
       continue;
     }
     recs = [...recs, ...recordsRes.recs];
   }
-
-  recs = await filterLinkQueryRes(recs);
+  recs = await filterLinkQueryRes(recs, web5Connection);
 
   return { status: recordsRes.status, recs };
 }
@@ -88,12 +92,12 @@ export async function queryAllLinks(web5: Web5): Promise<{ status: any, recs: QG
 /**
  * Queries all followed dids for connected user.
  *
- * @param {Web5} web5 - The Web5 instance to use for querying links and records.
+ * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
  * @returns {Promise<{status: any, recs: QGoFollowsResponse[]}>}
  */
-export async function followRecordsQuery(web5: Web5): Promise<{ status: any, recs: QGoFollowsResponse[] }> {
+export async function followRecordsQuery(web5Connection: Web5Connection): Promise<{ status: any, recs: QGoFollowsResponse[] }> {
   // Get records of followed dids and their links
-  const recordsRes = await web5.dwn.records.query({
+  const recordsRes = await web5Connection.web5.dwn.records.query({
     message: {
       filter: {
         protocol: qGoProtocol.protocol,
@@ -117,8 +121,8 @@ export async function followRecordsQuery(web5: Web5): Promise<{ status: any, rec
   };
 }
 
-export async function deleteRecord(web5: Web5, recordId: string) {
-  const record = await web5.dwn.records.delete({
+export async function deleteRecord(web5Connection: Web5Connection, recordId: string) {
+  const record = await web5Connection.web5.dwn.records.delete({
     message: {
       recordId,
     },
@@ -130,9 +134,21 @@ export async function deleteRecord(web5: Web5, recordId: string) {
   return true;
 }
 
-export async function filterLinkQueryRes(links: QGoLinkResponse[]) {
+export async function filterLinkQueryRes(links: QGoLinkResponse[], web5Connection: Web5Connection) {
   // Filter out deleted links and return a filtered list of data. Right now not used.
   let recs: QGoLinkResponse[] = [];
+
+  const idMap: Map<string, QGoLinkResponse> = new Map();
+  for (const link of links) {
+    if (!idMap.has(link.data.name)) {
+      idMap.set(link.data.name, link)
+    } else if (link.record.author === web5Connection.did) {
+      const existingRec = idMap.get(link.data.name);
+      if (existingRec && new Date(link.record.dateCreated) > new Date(existingRec.record.dateCreated)) {
+        idMap.set(link.data.name, link)
+      }
+    }
+  }
 
   for (const link of links) {
     recs.push(link);
