@@ -136,8 +136,6 @@ export async function deleteRecord(web5Connection: Web5Connection, recordId: str
 
 export async function filterLinkQueryRes(links: QGoLinkResponse[], web5Connection: Web5Connection) {
   // Filter out deleted links and return a filtered list of data. Right now not used.
-  let recs: QGoLinkResponse[] = [];
-
   const idMap: Map<string, QGoLinkResponse> = new Map();
   for (const link of links) {
     if (!idMap.has(link.data.name)) {
@@ -149,10 +147,7 @@ export async function filterLinkQueryRes(links: QGoLinkResponse[], web5Connectio
       }
     }
   }
-
-  for (const link of links) {
-    recs.push(link);
-  }
+  let recs = Array.from(idMap.values());
   return recs
 }
 
