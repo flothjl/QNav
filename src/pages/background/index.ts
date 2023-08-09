@@ -1,21 +1,18 @@
-import { connectWeb5, configureProtocol, linksRecordsQuery, parseAndFilterLinkQueryRes } from "@src/util";
-import { qGoProtocol } from "../../protocols";
-import { QGoLink, QGoLinkResponse, Web5Connection } from "../../types";
+import { connectWeb5, queryAllLinks } from "@src/util";
+import { QGoLink, Web5Connection } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
   const web5 = await connectWeb5();
-  web5.web5 && await configureProtocol(web5.web5, qGoProtocol);
   return web5;
 };
 
 const queryLinks = async (web5: Web5Connection) => {
-  let recs: QGoLinkResponse[] = [];
-  const recordsRes = web5.web5 && await linksRecordsQuery(web5.web5);
-  if(recordsRes){
-    recs = await parseAndFilterLinkQueryRes(recordsRes);
+  const links = await queryAllLinks(web5);
+  if (links?.status.code !== 200) {
+    console.log("Failed to query links", links?.status);
   }
-  return recs;
+  return links?.recs || [];
 };
 
 // Function to calculate similarity score between two strings

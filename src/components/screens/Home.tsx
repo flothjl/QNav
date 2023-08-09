@@ -23,16 +23,20 @@ const Home = () => {
         : "Invalid URL";
     setNameError(nameHasError);
     setUrlError(urlHasError);
-    if (!nameHasError && !urlHasError) {
+    if (
+      !nameHasError &&
+      !urlHasError &&
+      nameRef?.current?.value &&
+      urlRef?.current?.value
+    ) {
       const success = await qNav?.addLink({
-        name: nameRef.current?.value || "",
-        url: urlRef.current?.value || "",
-        isDeleted: false,
+        name: nameRef.current.value,
+        url: urlRef.current.value,
       });
-      if(success){
-        toast.success('Link saved!')
+      if (success) {
+        toast.success("Link saved!");
       } else {
-        toast.error('Unable to save link')
+        toast.error("Unable to save link");
       }
     }
   };
@@ -43,7 +47,7 @@ const Home = () => {
     };
     if (!qNav.web5) return;
     makeQueries();
-  }, [qNav.web5]);
+  }, [qNav.web5, qNav.follows]);
 
   useEffect(() => {
     getActiveTabUrl((url) => {
@@ -54,24 +58,18 @@ const Home = () => {
   return (
     <div className="flex items-center justify-center">
       <div className="h-full w-full px-3">
+      <h1 className="text-lg mb-1 text-center">Save a Link</h1>
         <form onSubmit={handleSubmit}>
           <Input ref={nameRef} label="Name:" error={nameError} />
           <Input ref={urlRef} label="URL:" error={urlError} />
-          <button
-            className="w-full rounded-full bg-gradient-to-tr from-orange-400 to-cyan-600 px-10 py-1 text-base hover:to-cyan-400"
-          >
+          <button className="w-full rounded-full bg-gradient-to-tr from-orange-400 to-cyan-600 px-10 py-1 text-base hover:to-cyan-400">
             Save QNav!
           </button>
         </form>
         <div className="mt-2 border-t-2 border-gray-300"></div>
         <QNavRecords>
           {qNav?.links?.map((link, i) => {
-            return (
-              <QNavRecords.Item
-                key={i}
-                link={link}
-              />
-            );
+            return <QNavRecords.Link key={i} link={link} />;
           })}
         </QNavRecords>
       </div>

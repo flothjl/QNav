@@ -3,7 +3,7 @@ import { Web5Connection } from "../types";
 import { connectWeb5 } from "../util";
 
 export function useWeb5() {
-  const [web5, setWeb5] = useState<Web5Connection>({web5: undefined, did: undefined});
+  const [web5, setWeb5] = useState<Web5Connection | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
   useEffect(() => {

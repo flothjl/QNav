@@ -1,6 +1,6 @@
 {
   "name": "QNav",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Quick Navigation built on web5",
   "omnibox": {
     "keyword": "go"
