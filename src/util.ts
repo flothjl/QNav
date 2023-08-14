@@ -78,6 +78,7 @@ export async function queryAllLinks(web5Connection: Web5Connection): Promise<{ s
 
   for (const follow of followsRes?.recs || []) {
     const recordsRes = await linksRecordsQuery(web5Connection, follow.data.did);
+    console.log(recordsRes);
     if (recordsRes?.status.code !== 200) {
       console.log(`unable to get links for followed DID: ${follow.data.did}`);
       continue;

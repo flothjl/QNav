@@ -1,5 +1,5 @@
 export const qGoProtocol = {
-    'protocol': "qnav",
+    'protocol': "https://qnav/protocol",
     'types': {
         'qGoLink': {
             'schema': "qGoLinkSchema",
@@ -18,13 +18,7 @@ export const qGoProtocol = {
                     'can': 'write'
                 },
                 {
-                    'who': 'author',
-                    'of': 'qGoLink',
-                    'can': 'read'
-                },
-                {
-                    'who': 'recipient',
-                    'of': 'qGoLink',
+                    'who': 'anyone',
                     'can': 'read'
                 }
             ]
