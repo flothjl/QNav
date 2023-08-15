@@ -6,13 +6,13 @@ export type Web5Connection = {
     did: string;
 };
 
-export type QGoLink = {
+export type QNavLink = {
     name: string
     description?: string
     url: string
 }
 
-export type QGoFollow = {
+export type QNavFollow = {
     did: string
     nickname?: string
 }
@@ -23,20 +23,20 @@ export type BaseRecordResponse<T> = {
     record: Record
 }
 
-export type QGoLinkResponse = BaseRecordResponse<QGoLink>
-export type QGoFollowsResponse = BaseRecordResponse<QGoFollow>
+export type QNavLinkResponse = BaseRecordResponse<QNavLink>
+export type QNavFollowsResponse = BaseRecordResponse<QNavFollow>
 
 export type QNavHook = {
     web5: Web5 | null
     did: string | null
     isLoading: boolean
     error: any
-    links: QGoLinkResponse[]
-    follows: QGoFollowsResponse[]
+    links: QNavLinkResponse[]
+    follows: QNavFollowsResponse[]
     queryLinks: () => Promise<boolean>
-    addLink: (value: QGoLink) => Promise<boolean>
+    addLink: (value: QNavLink) => Promise<boolean>
     deleteLink: (link: any) => Promise<boolean>
-    addFollow: (data: QGoFollow) => Promise<boolean>
+    addFollow: (data: QNavFollow) => Promise<boolean>
     deleteFollow: (follow: any) => Promise<boolean>
     queryFollows: () => Promise<boolean>
 }

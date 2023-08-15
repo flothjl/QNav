@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
-import { qGoProtocol } from "../protocols";
 import {
   QNavHook,
-  QGoFollow,
-  QGoFollowsResponse,
-  QGoLink,
-  QGoLinkResponse,
+  QNavFollow,
+  QNavFollowsResponse,
+  QNavLink,
+  QNavLinkResponse,
 } from "../types";
-import { QGoApi } from "../util";
+import { QNavApi } from "../util";
 
 export function useQNav(): QNavHook {
-  const [links, setLinks] = useState<QGoLinkResponse[]>([]);
-  const [follows, setFollows] = useState<QGoFollowsResponse[]>([]);
-  const [qGoApi, setQGoApi] = useState<QGoApi | null>(null);
+  const [links, setLinks] = useState<QNavLinkResponse[]>([]);
+  const [follows, setFollows] = useState<QNavFollowsResponse[]>([]);
+  const [qNavApi, setQNavApi] = useState<QNavApi | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
 
   useEffect(() => {
     const createApi = async () => {
       try {
-        setQGoApi(await QGoApi.create());
+        setQNavApi(await QNavApi.create());
       } catch (err) {
         setError(err);
         console.error(err);
@@ -31,7 +30,7 @@ export function useQNav(): QNavHook {
   }, [])
 
   const queryLinks = async (): Promise<boolean> => {
-    const links = await qGoApi?.queryAllLinks();
+    const links = await qNavApi?.queryAllLinks();
     if (links?.status.code !== 200) {
       return false;
     }
@@ -40,7 +39,7 @@ export function useQNav(): QNavHook {
   };
 
   const queryFollows = async () => {
-    const follows = await qGoApi?.followRecordsQuery();
+    const follows = await qNavApi?.followRecordsQuery();
     if (follows?.status.code !== 200) {
       return false;
     }
@@ -48,12 +47,12 @@ export function useQNav(): QNavHook {
     return true;
   };
 
-  const addFollow = async (data: QGoFollow) => {
-    const record = await qGoApi?.followDid(data);
+  const addFollow = async (data: QNavFollow) => {
+    const record = await qNavApi?.followDid(data);
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(qGoApi?.did || "");
+    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
     if (sendStatus.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
@@ -61,12 +60,12 @@ export function useQNav(): QNavHook {
     return true;
   };
 
-  const addLink = async (value: QGoLink): Promise<boolean> => {
-    const record = await qGoApi?.addLink(value);
+  const addLink = async (value: QNavLink): Promise<boolean> => {
+    const record = await qNavApi?.addLink(value);
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(qGoApi?.did || "");
+    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
     if (sendStatus.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
@@ -74,21 +73,21 @@ export function useQNav(): QNavHook {
     return true;
   };
 
-  const deleteLink = async (link: QGoLinkResponse): Promise<boolean> => {
-    const isSuccess = await qGoApi?.deleteRecord(link.id);
+  const deleteLink = async (link: QNavLinkResponse): Promise<boolean> => {
+    const isSuccess = await qNavApi?.deleteRecord(link.id);
     queryLinks();
     return isSuccess || false;
   };
 
-  const deleteFollow = async (link: QGoFollowsResponse): Promise<boolean> => {
-    const isSuccess = await qGoApi?.deleteRecord(link.id);
+  const deleteFollow = async (link: QNavFollowsResponse): Promise<boolean> => {
+    const isSuccess = await qNavApi?.deleteRecord(link.id);
     queryFollows();
     return isSuccess || false;
   };
 
   return {
-    web5: qGoApi?.web5 || null,
-    did: qGoApi?.did || null,
+    web5: qNavApi?.web5 || null,
+    did: qNavApi?.did || null,
     isLoading,
     error,
     links,
