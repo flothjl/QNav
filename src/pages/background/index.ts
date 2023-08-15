@@ -1,14 +1,14 @@
-import { connectWeb5, queryAllLinks } from "@src/util";
-import { QGoLink, Web5Connection } from "../../types";
+import { QGoApi } from "@src/util";
+import { QGoLink } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
-  const web5 = await connectWeb5();
-  return web5;
+  const qGoApi = await QGoApi.create();
+  return qGoApi;
 };
 
-const queryLinks = async (web5: Web5Connection) => {
-  const links = await queryAllLinks(web5);
+const queryLinks = async (qGoApi: QGoApi) => {
+  const links = await qGoApi.queryAllLinks();
   if (links?.status.code !== 200) {
     console.log("Failed to query links", links?.status);
   }
@@ -66,9 +66,9 @@ function escapeXml(xmlString: string): string {
   });
 }
 
-const omniboxListener = async (web5: Web5Connection) => {
+const omniboxListener = async (qGoApi: QGoApi) => {
   chrome.omnibox.onInputChanged.addListener(async (text, sendSuggestion) => {
-      const linkData = await queryLinks(web5);
+      const linkData = await queryLinks(qGoApi);
       const recs = suggestLink(text, linkData.map((link) => link.data));
       sendSuggestion(
         recs.map((rec) => {
@@ -80,7 +80,7 @@ const omniboxListener = async (web5: Web5Connection) => {
       )
   })
   chrome.omnibox.onInputEntered.addListener(async (string,) => {
-    const linkData = await queryLinks(web5);
+    const linkData = await queryLinks(qGoApi);
     const links = linkData.map((link) => link.data);
     const url = findLink(string, links);
     if (url) {
@@ -91,7 +91,7 @@ const omniboxListener = async (web5: Web5Connection) => {
 
 
 
-connect().then(async (web5) => {
-  await omniboxListener(web5);
+connect().then(async (qGoApi) => {
+  await omniboxListener(qGoApi);
 })
 

@@ -1,8 +1,9 @@
 import { createContext } from "react";
-import { QGoApi } from "../types";
+import { QNavHook } from "../types";
 
-const QNavContext = createContext<QGoApi>({
+const QNavContext = createContext<QNavHook>({
   web5: null,
+  did: null,
   isLoading: true,
   error: null,
   links: [],

@@ -26,8 +26,9 @@ export type BaseRecordResponse<T> = {
 export type QGoLinkResponse = BaseRecordResponse<QGoLink>
 export type QGoFollowsResponse = BaseRecordResponse<QGoFollow>
 
-export type QGoApi = {
-    web5: Web5Connection | null
+export type QNavHook = {
+    web5: Web5 | null
+    did: string | null
     isLoading: boolean
     error: any
     links: QGoLinkResponse[]

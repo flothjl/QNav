@@ -37,7 +37,6 @@ const Social = () => {
     };
     if (!qNav.web5) return;
     makeQueries();
-    console.log(qNav.web5.did)
   }, [qNav.web5]);
 
   return (
