@@ -5,8 +5,8 @@ import {
   QNavFollowsResponse,
   QNavLink,
   QNavLinkResponse,
-} from "../types";
-import { QNavApi } from "../util";
+} from "@src/types";
+import { QNavApi } from "@src/qNavApi";
 
 export function useQNav(): QNavHook {
   const [links, setLinks] = useState<QNavLinkResponse[]>([]);

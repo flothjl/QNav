@@ -1,4 +1,4 @@
-import { QNavApi } from "@src/util";
+import { QNavApi } from "@src/qNavApi";
 import { QNavLink } from "../../types";
 import { findLink } from "./util";
 
