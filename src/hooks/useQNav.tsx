@@ -49,15 +49,7 @@ export function useQNav(): QNavHook {
   };
 
   const addFollow = async (data: QGoFollow) => {
-    const record = await qGoApi?.web5.dwn.records.create({
-      data,
-      message: {
-        dataFormat: "application/json",
-        protocol: qGoProtocol.protocol,
-        protocolPath: "qGoFollow",
-        schema: "qGoFollowSchema",
-      },
-    });
+    const record = await qGoApi?.followDid(data);
     if (record?.status.code !== 202) {
       return false;
     }
@@ -70,15 +62,7 @@ export function useQNav(): QNavHook {
   };
 
   const addLink = async (value: QGoLink): Promise<boolean> => {
-    const record = await qGoApi?.web5.dwn.records.create({
-      data: value,
-      message: {
-        dataFormat: "application/json",
-        protocol: qGoProtocol.protocol,
-        protocolPath: "qGoLink",
-        schema: "qGoLinkSchema",
-      },
-    });
+    const record = await qGoApi?.addLink(value);
     if (record?.status.code !== 202) {
       return false;
     }

@@ -1,6 +1,7 @@
 import { Web5 } from "@tbd54566975/web5";
 import { QGoLinkResponse, QGoFollowsResponse, QGoFollow, QGoLink, Web5Connection } from "./types";
 import { qGoProtocol } from "./protocols";
+import { RecordsWriteResponse } from "@tbd54566975/web5/dist/types/dwn-api";
 
 export class QGoApi {
   did: string;
@@ -48,9 +49,46 @@ export class QGoApi {
   }
 
   /**
+   * Adds a Link.
+   *
+   * @param {QGoLink} data - The data of the Link to add.
+   * @returns {Promise<RecordsWriteResponse>} - An object containing the status of the request.
+   */
+    async addLink(data: QGoLink): Promise<RecordsWriteResponse> {
+      const recordRes = await this.web5.dwn.records.create({
+        data,
+        message: {
+          dataFormat: "application/json",
+          protocol: qGoProtocol.protocol,
+          protocolPath: "qGoLink",
+          schema: "qGoLinkSchema",
+        },
+      });
+      return recordRes;
+    }
+
+  /**
+   * Adds a DID to the user's follow list.
+   *
+   * @param {QGoFollow} data - The data of the DID to follow.
+   * @returns {Promise<RecordsWriteResponse>} - An object containing the status of the request.
+   */
+    async followDid(data: QGoFollow): Promise<RecordsWriteResponse> {
+      const recordRes = await this.web5.dwn.records.create({
+        data,
+        message: {
+          dataFormat: "application/json",
+          protocol: qGoProtocol.protocol,
+          protocolPath: "qGoFollow",
+          schema: "qGoFollowSchema",
+        },
+      });
+      return recordRes;
+    }
+
+  /**
    * Queries all links for connected user.
    *
-   * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
    * @param {any} from - The DID to query links from (optional).
    * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
    */
@@ -81,7 +119,6 @@ export class QGoApi {
   /**
    * Queries all links for connected user and all followed dids.
    *
-   * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
    * @returns {Promise<{status: any, recs: QGoLinkResponse[]}>} - An object containing the status and an array of link records (QGoLinkResponse[]).
    */
   async queryAllLinks(): Promise<{ status: any, recs: QGoLinkResponse[] }> {
@@ -107,7 +144,6 @@ export class QGoApi {
   /**
    * Queries all followed dids for connected user.
    *
-   * @param {Web5Connection} web5Connection - The Web5 instance to use for querying links and records.
    * @returns {Promise<{status: any, recs: QGoFollowsResponse[]}>}
    */
   async followRecordsQuery(): Promise<{ status: any, recs: QGoFollowsResponse[] }> {
