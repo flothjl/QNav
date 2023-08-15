@@ -9,7 +9,7 @@ const Root = () => {
   const qNav = useQNav();
   const handleDidCopy = async () => {
     try {
-      await navigator.clipboard.writeText(qNav.web5?.did || "");
+      await navigator.clipboard.writeText(qNav.did || "");
       toast.success("DID copied to clipboard");
     } catch (err) {
       toast.error("Failed to copy DID to clipboard");

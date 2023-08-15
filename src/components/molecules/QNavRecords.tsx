@@ -5,11 +5,11 @@ import GlobalLoader from "./GlobalLoader";
 import {
   HiTrash as TrashIconFilled,
 } from "react-icons/hi2";
-import { QGoFollowsResponse, QGoLinkResponse } from "@src/types";
+import { QNavFollowsResponse, QNavLinkResponse } from "@src/types";
 
 interface QNavRecordsComponent extends React.FC<PropsWithChildren> {
-  Link: React.FC<{ link: QGoLinkResponse }>;
-  Follow: React.FC<{follow: QGoFollowsResponse}>
+  Link: React.FC<{ link: QNavLinkResponse }>;
+  Follow: React.FC<{follow: QNavFollowsResponse}>
 }
 
 const QNavRecords: QNavRecordsComponent = ({ children }) => {

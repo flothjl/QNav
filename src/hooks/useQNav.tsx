@@ -1,23 +1,36 @@
-import { useState } from "react";
-import { qGoProtocol } from "../protocols";
-import { useWeb5 } from "./useWeb5";
+import { useEffect, useState } from "react";
 import {
-  QGoApi,
-  QGoFollow,
-  QGoFollowsResponse,
-  QGoLink,
-  QGoLinkResponse,
-} from "../types";
-import { deleteRecord, followRecordsQuery, queryAllLinks } from "../util";
+  QNavHook,
+  QNavFollow,
+  QNavFollowsResponse,
+  QNavLink,
+  QNavLinkResponse,
+} from "@src/types";
+import { QNavApi } from "@src/qNavApi";
 
-export function useQNav(): QGoApi {
-  const [links, setLinks] = useState<QGoLinkResponse[]>([]);
-  const [follows, setFollows] = useState<QGoFollowsResponse[]>([]);
+export function useQNav(): QNavHook {
+  const [links, setLinks] = useState<QNavLinkResponse[]>([]);
+  const [follows, setFollows] = useState<QNavFollowsResponse[]>([]);
+  const [qNavApi, setQNavApi] = useState<QNavApi | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
-  const { web5, isLoading, error } = useWeb5();
+  useEffect(() => {
+    const createApi = async () => {
+      try {
+        setQNavApi(await QNavApi.create());
+      } catch (err) {
+        setError(err);
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    createApi();
+  }, [])
 
   const queryLinks = async (): Promise<boolean> => {
-    const links = web5 && (await queryAllLinks(web5));
+    const links = await qNavApi?.queryAllLinks();
     if (links?.status.code !== 200) {
       return false;
     }
@@ -26,7 +39,7 @@ export function useQNav(): QGoApi {
   };
 
   const queryFollows = async () => {
-    const follows = web5 && (await followRecordsQuery(web5));
+    const follows = await qNavApi?.followRecordsQuery();
     if (follows?.status.code !== 200) {
       return false;
     }
@@ -34,20 +47,12 @@ export function useQNav(): QGoApi {
     return true;
   };
 
-  const addFollow = async (data: QGoFollow) => {
-    const record = await web5?.web5.dwn.records.create({
-      data,
-      message: {
-        dataFormat: "application/json",
-        protocol: qGoProtocol.protocol,
-        protocolPath: "qGoFollow",
-        schema: "qGoFollowSchema",
-      },
-    });
+  const addFollow = async (data: QNavFollow) => {
+    const record = await qNavApi?.followDid(data);
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(web5?.did || "");
+    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
     if (sendStatus.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
@@ -55,20 +60,12 @@ export function useQNav(): QGoApi {
     return true;
   };
 
-  const addLink = async (value: QGoLink): Promise<boolean> => {
-    const record = await web5?.web5.dwn.records.create({
-      data: value,
-      message: {
-        dataFormat: "application/json",
-        protocol: qGoProtocol.protocol,
-        protocolPath: "qGoLink",
-        schema: "qGoLinkSchema",
-      },
-    });
+  const addLink = async (value: QNavLink): Promise<boolean> => {
+    const record = await qNavApi?.addLink(value);
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(web5?.did || "");
+    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
     if (sendStatus.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
@@ -76,20 +73,21 @@ export function useQNav(): QGoApi {
     return true;
   };
 
-  const deleteLink = async (link: QGoLinkResponse): Promise<boolean> => {
-    const isSuccess = web5 && (await deleteRecord(web5, link.id));
+  const deleteLink = async (link: QNavLinkResponse): Promise<boolean> => {
+    const isSuccess = await qNavApi?.deleteRecord(link.id);
     queryLinks();
     return isSuccess || false;
   };
 
-  const deleteFollow = async (link: QGoFollowsResponse): Promise<boolean> => {
-    const isSuccess = web5 && (await deleteRecord(web5, link.id));
+  const deleteFollow = async (link: QNavFollowsResponse): Promise<boolean> => {
+    const isSuccess = await qNavApi?.deleteRecord(link.id);
     queryFollows();
     return isSuccess || false;
   };
 
   return {
-    web5,
+    web5: qNavApi?.web5 || null,
+    did: qNavApi?.did || null,
     isLoading,
     error,
     links,

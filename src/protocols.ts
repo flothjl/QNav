@@ -1,35 +1,29 @@
-export const qGoProtocol = {
-    'protocol': "qnav",
+export const qNavProtocol = {
+    'protocol': "https://qnavprotocol",
     'types': {
-        'qGoLink': {
-            'schema': "qGoLinkSchema",
+        'qNavLink': {
+            'schema': "qNavLinkSchema",
             'dataFormats': ["application/json"],
         },
-        'qGoFollow': {
-            'schema': "qGoFollowSchema",
+        'qNavFollow': {
+            'schema': "qNavFollowSchema",
             'dataFormats': ["application/json"],
         }
     },
     'structure': {
-        'qGoLink': {
+        'qNavLink': {
             '$actions': [
                 {
                     'who': 'anyone',
                     'can': 'write'
                 },
                 {
-                    'who': 'author',
-                    'of': 'qGoLink',
-                    'can': 'read'
-                },
-                {
-                    'who': 'recipient',
-                    'of': 'qGoLink',
+                    'who': 'anyone',
                     'can': 'read'
                 }
             ]
         },
-        'qGoFollow': {
+        'qNavFollow': {
             '$actions': [
                 {
                     'who': 'anyone',
@@ -37,7 +31,7 @@ export const qGoProtocol = {
                 },
                 {
                     'who': 'author',
-                    'of': 'qGoFollow',
+                    'of': 'qNavFollow',
                     'can': 'read'
                 }
             ]

@@ -1,14 +1,14 @@
-import { connectWeb5, queryAllLinks } from "@src/util";
-import { QGoLink, Web5Connection } from "../../types";
+import { QNavApi } from "@src/qNavApi";
+import { QNavLink } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
-  const web5 = await connectWeb5();
-  return web5;
+  const qNavApi = await QNavApi.create();
+  return qNavApi;
 };
 
-const queryLinks = async (web5: Web5Connection) => {
-  const links = await queryAllLinks(web5);
+const queryLinks = async (qNavApi: QNavApi) => {
+  const links = await qNavApi.queryAllLinks();
   if (links?.status.code !== 200) {
     console.log("Failed to query links", links?.status);
   }
@@ -25,7 +25,7 @@ function calculateSimilarity(str1: string, str2: string) {
   return similarity;
 }
 
-const suggestLink = (searchString: string, links: QGoLink[]) => {
+const suggestLink = (searchString: string, links: QNavLink[]) => {
   const regex = new RegExp(searchString, 'i');
   const matchingObjects = [];
 
@@ -66,9 +66,9 @@ function escapeXml(xmlString: string): string {
   });
 }
 
-const omniboxListener = async (web5: Web5Connection) => {
+const omniboxListener = async (qNavApi: QNavApi) => {
   chrome.omnibox.onInputChanged.addListener(async (text, sendSuggestion) => {
-      const linkData = await queryLinks(web5);
+      const linkData = await queryLinks(qNavApi);
       const recs = suggestLink(text, linkData.map((link) => link.data));
       sendSuggestion(
         recs.map((rec) => {
@@ -80,7 +80,7 @@ const omniboxListener = async (web5: Web5Connection) => {
       )
   })
   chrome.omnibox.onInputEntered.addListener(async (string,) => {
-    const linkData = await queryLinks(web5);
+    const linkData = await queryLinks(qNavApi);
     const links = linkData.map((link) => link.data);
     const url = findLink(string, links);
     if (url) {
@@ -91,7 +91,7 @@ const omniboxListener = async (web5: Web5Connection) => {
 
 
 
-connect().then(async (web5) => {
-  await omniboxListener(web5);
+connect().then(async (qNavApi) => {
+  await omniboxListener(qNavApi);
 })
 
