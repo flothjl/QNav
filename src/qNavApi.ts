@@ -1,7 +1,7 @@
-import { Web5 } from "@tbd54566975/web5";
+import { Web5 } from "@web5/api";
 import { QNavLinkResponse, QNavFollowsResponse, QNavFollow, QNavLink, Web5Connection } from "./types";
 import { qNavProtocol } from "./protocols";
-import { RecordsWriteResponse } from "@tbd54566975/web5/dist/types/dwn-api";
+import { RecordsWriteResponse } from "@web5/api/dist/types/dwn-api";
 
 export class QNavApi {
   did: string;
@@ -106,6 +106,9 @@ export class QNavApi {
         dateSort: "createdDescending",
       },
     });
+    if(from){
+      console.log(recordsRes)
+    }
     let recs: QNavLinkResponse[] = [];
     for (const record of recordsRes?.records || []) {
       const data: QNavLink = await record.data.json();
@@ -160,6 +163,7 @@ export class QNavApi {
         dateSort: "createdDescending",
       },
     });
+
     let recs: QNavFollowsResponse[] = [];
     for (const record of recordsRes?.records || []) {
       const data: QNavFollow = await record.data.json();

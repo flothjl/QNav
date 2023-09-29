@@ -1,5 +1,6 @@
 export const qNavProtocol = {
-    'protocol': "https://qnavprotocol",
+    'protocol': "https://qnavprotocol_dev",
+    'published': true,
     'types': {
         'qNavLink': {
             'schema': "qNavLinkSchema",
@@ -15,11 +16,11 @@ export const qNavProtocol = {
             '$actions': [
                 {
                     'who': 'anyone',
-                    'can': 'write'
+                    'can': 'read'
                 },
                 {
                     'who': 'anyone',
-                    'can': 'read'
+                    'can': 'write'
                 }
             ]
         },

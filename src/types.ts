@@ -1,5 +1,5 @@
-import { Web5 } from "@tbd54566975/web5";
-import { Record } from "@tbd54566975/web5/dist/types/record";
+import { Web5 } from "@web5/api";
+import { Record } from "@web5/api/dist/types/record";
 
 export type Web5Connection = {
     web5: Web5;
