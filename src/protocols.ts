@@ -3,11 +3,11 @@ export const qNavProtocol = {
     'published': true,
     'types': {
         'qNavLink': {
-            'schema': "qNavLinkSchema",
+            'schema': "urn:qNavLinkSchema",
             'dataFormats': ["application/json"],
         },
         'qNavFollow': {
-            'schema': "qNavFollowSchema",
+            'schema': "urn:qNavFollowSchema",
             'dataFormats': ["application/json"],
         }
     },

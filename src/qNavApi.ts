@@ -61,7 +61,7 @@ export class QNavApi {
         dataFormat: "application/json",
         protocol: qNavProtocol.protocol,
         protocolPath: "qNavLink",
-        schema: "qNavLinkSchema",
+        schema: qNavProtocol.types.qNavLink.schema,
       },
     });
     return recordRes;
@@ -80,7 +80,7 @@ export class QNavApi {
         dataFormat: "application/json",
         protocol: qNavProtocol.protocol,
         protocolPath: "qNavFollow",
-        schema: "qNavFollowSchema",
+        schema: qNavProtocol.types.qNavFollow.schema,
       },
     });
     return recordRes;
@@ -98,7 +98,7 @@ export class QNavApi {
       message: {
         filter: {
           protocol: qNavProtocol.protocol,
-          schema: "qNavLinkSchema",
+          schema: qNavProtocol.types.qNavLink.schema,
           dataFormat: "application/json",
         },
         // TODO: import proper enum to avoid having to ts-ignore
@@ -155,7 +155,7 @@ export class QNavApi {
       message: {
         filter: {
           protocol: qNavProtocol.protocol,
-          schema: "qNavFollowSchema",
+          schema: qNavProtocol.types.qNavFollow.schema,
           dataFormat: "application/json",
         },
         // TODO: import proper enum to avoid having to ts-ignore

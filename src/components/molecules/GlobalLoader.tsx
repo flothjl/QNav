@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import QNavContext from "@contexts/QNavContext";
+import { QNavContext } from "@contexts/QNavContext";
 
 const GlobalLoader: React.FC<PropsWithChildren> = ({ children }) => {
   const qNav = React.useContext(QNavContext);

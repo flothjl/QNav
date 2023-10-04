@@ -1,6 +1,6 @@
 import { useRef, useEffect, useContext, useState } from "react";
 import { toast } from "react-toastify";
-import QNavContext from "@contexts/QNavContext";
+import { QNavContext } from "@contexts/QNavContext";
 import QNavRecords from "@components/molecules/QNavRecords";
 import { getActiveTabUrl, isValidUrl } from "@src/util";
 import Input from "@components/atoms/Input";

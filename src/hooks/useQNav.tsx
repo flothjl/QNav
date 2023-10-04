@@ -11,7 +11,7 @@ import { QNavApi } from "@src/qNavApi";
 export function useQNav(): QNavHook {
   const [links, setLinks] = useState<QNavLinkResponse[]>([]);
   const [follows, setFollows] = useState<QNavFollowsResponse[]>([]);
-  const [qNavApi, setQNavApi] = useState<QNavApi | null>(null);
+  const [qNavApi, setQNavApi] = useState<QNavApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
 
@@ -86,8 +86,8 @@ export function useQNav(): QNavHook {
   };
 
   return {
-    web5: qNavApi?.web5 || null,
-    did: qNavApi?.did || null,
+    web5: qNavApi?.web5,
+    did: qNavApi?.did,
     isLoading,
     error,
     links,

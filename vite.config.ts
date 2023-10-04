@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 
 const root = resolve(__dirname, 'src');
@@ -23,20 +24,30 @@ export default defineConfig({
       '@contexts': contextsDir,
     },
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: {
+        Buffer: true, // can also be 'build', 'dev', or false
+        global: true,
+        process: true,
+      },
+    })
+  ],
   publicDir,
   build: {
     outDir,
     emptyOutDir: true,
     target: 'esnext',
+    sourcemap: true,
     rollupOptions: {
       input: {
         background: resolve(pagesDir, 'background', 'index.ts'),
-        "popup/sandbox": resolve(pagesDir, 'popup', 'index.html')
+        popup: resolve(pagesDir, 'popup', 'index.html')
       },
       output: {
         entryFileNames: (chunk) => `src/pages/${chunk.name}/index.js`
-      },
+      }
     },
   },
 });

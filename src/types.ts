@@ -27,8 +27,8 @@ export type QNavLinkResponse = BaseRecordResponse<QNavLink>
 export type QNavFollowsResponse = BaseRecordResponse<QNavFollow>
 
 export type QNavHook = {
-    web5: Web5 | null
-    did: string | null
+    web5: Web5 | undefined
+    did: string | undefined
     isLoading: boolean
     error: any
     links: QNavLinkResponse[]
