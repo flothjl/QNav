@@ -1,5 +1,5 @@
 import { QNavApi } from "@src/qNavApi";
-import { QNavLink } from "../../types";
+import { QNavLink, QNavLinkResponse } from "../../types";
 import { findLink } from "./util";
 
 const connect = async () => {
@@ -67,8 +67,13 @@ function escapeXml(xmlString: string): string {
 }
 
 const omniboxListener = async (qNavApi: QNavApi) => {
+  let linkData: QNavLinkResponse[] = [];
+
+  chrome.omnibox.onInputStarted.addListener(async () => {
+    linkData = await queryLinks(qNavApi);
+  })
+
   chrome.omnibox.onInputChanged.addListener(async (text, sendSuggestion) => {
-      const linkData = await queryLinks(qNavApi);
       const recs = suggestLink(text, linkData.map((link) => link.data));
       sendSuggestion(
         recs.map((rec) => {
@@ -88,8 +93,6 @@ const omniboxListener = async (qNavApi: QNavApi) => {
     }
   });
 };
-
-
 
 connect().then(async (qNavApi) => {
   await omniboxListener(qNavApi);

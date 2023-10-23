@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useContext } from "react";
 import { toast } from "react-toastify";
 import { QNavContext } from "@contexts/QNavContext";
-import GlobalLoader from "./GlobalLoader";
 import { HiTrash as TrashIconFilled } from "react-icons/hi2";
+import { HiUsers } from "react-icons/hi2";
 import { QNavFollowsResponse, QNavLinkResponse } from "@src/types";
 
 interface QNavRecordsComponent extends React.FC<PropsWithChildren> {
@@ -28,7 +28,10 @@ QNavRecords.Link = ({ link }) => {
     <div className="my-1 flex h-20 flex-col justify-center rounded-lg bg-primary-500 px-3">
       <div className="flex flex-row justify-between">
         <div className="flex min-w-0 basis-10/12 flex-col">
-          <p className="max-w-full text-xl">{link.data.name}</p>
+          {link.isExternal && <HiUsers className="mr-1" size={12} title="From followed user"/> }
+          <p className="max-w-full text-xl">
+            <span className="inline mr-1">{link.data.name}</span>
+          </p>
           <p className="max-w-full truncate text-xs font-thin">
             {link.data.url}
           </p>

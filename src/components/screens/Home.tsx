@@ -4,11 +4,14 @@ import { QNavContext } from "@contexts/QNavContext";
 import QNavRecords from "@components/molecules/QNavRecords";
 import { getActiveTabUrl, isValidUrl } from "@src/util";
 import Input from "@components/atoms/Input";
+import Toggle from "@components/atoms/Toggle";
 
 const Home = () => {
   const qNav = useContext(QNavContext);
   const nameRef = useRef<HTMLInputElement>(null);
   const urlRef = useRef<HTMLInputElement>(null);
+  const isPrivateRef = useRef<HTMLInputElement>(null);
+  
   const [nameError, setNameError] = useState<boolean | string>(false);
   const [urlError, setUrlError] = useState<boolean | string>(false);
 
@@ -29,10 +32,13 @@ const Home = () => {
       nameRef?.current?.value &&
       urlRef?.current?.value
     ) {
-      const success = await qNav?.addLink({
-        name: nameRef.current.value,
-        url: urlRef.current.value,
-      });
+      const success = await qNav?.addLink(
+        {
+          name: nameRef.current.value,
+          url: urlRef.current.value
+        },
+        isPrivateRef.current?.checked || false
+      );
       if (success) {
         toast.success("Link saved!");
       } else {
@@ -62,6 +68,7 @@ const Home = () => {
         <form onSubmit={handleSubmit}>
           <Input ref={nameRef} label="Name:" error={nameError} />
           <Input ref={urlRef} label="URL:" error={urlError} />
+          <Toggle ref={isPrivateRef} label="Private" />
           <button className="w-full rounded-full bg-gradient-to-tr from-orange-400 to-cyan-600 px-10 py-1 text-base hover:to-cyan-400">
             Save QNav!
           </button>

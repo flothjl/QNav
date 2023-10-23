@@ -5,6 +5,7 @@ import {
   QNavFollowsResponse,
   QNavLink,
   QNavLinkResponse,
+  QNavLinkRequest,
 } from "@src/types";
 import { QNavApi } from "@src/qNavApi";
 
@@ -60,8 +61,9 @@ export function useQNav(): QNavHook {
     return true;
   };
 
-  const addLink = async (value: QNavLink): Promise<boolean> => {
-    const record = await qNavApi?.addLink(value);
+  const addLink = async (data: QNavLink, isPrivate: boolean = false): Promise<boolean> => {
+    const request: QNavLinkRequest = {data, isPrivate}
+    const record = await qNavApi?.addLink(request);
     if (record?.status.code !== 202) {
       return false;
     }

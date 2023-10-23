@@ -1,5 +1,5 @@
 import { Web5 } from "@web5/api";
-import { QNavLinkResponse, QNavFollowsResponse, QNavFollow, QNavLink, Web5Connection } from "./types";
+import { QNavLinkResponse, QNavFollowsResponse, QNavFollow, QNavLink, Web5Connection, QNavLinkRequest } from "./types";
 import { qNavProtocol } from "./protocols";
 import { RecordsWriteResponse } from "@web5/api/dist/types/dwn-api";
 
@@ -51,17 +51,21 @@ export class QNavApi {
   /**
    * Adds a Link.
    *
-   * @param {QNavLink} data - The data of the Link to add.
+   * @param {QNavLinkRequest} request - The data of the Link to add.
    * @returns {Promise<RecordsWriteResponse>} - An object containing the status of the request.
    */
-  async addLink(data: QNavLink): Promise<RecordsWriteResponse> {
+  async addLink(request: QNavLinkRequest): Promise<RecordsWriteResponse> {
+    const { data, isPrivate } = request;
+    const protocolPath = isPrivate ? "privateLink" : "link";
+    const schema = isPrivate ? qNavProtocol.types.privateLink.schema : qNavProtocol.types.link.schema;
     const recordRes = await this.web5.dwn.records.create({
       data,
       message: {
         dataFormat: "application/json",
         protocol: qNavProtocol.protocol,
-        protocolPath: "qNavLink",
-        schema: qNavProtocol.types.qNavLink.schema,
+        protocolPath,
+        schema,
+        published: true
       },
     });
     return recordRes;
@@ -79,8 +83,8 @@ export class QNavApi {
       message: {
         dataFormat: "application/json",
         protocol: qNavProtocol.protocol,
-        protocolPath: "qNavFollow",
-        schema: qNavProtocol.types.qNavFollow.schema,
+        protocolPath: "follow",
+        schema: qNavProtocol.types.follow.schema,
       },
     });
     return recordRes;
@@ -98,7 +102,7 @@ export class QNavApi {
       message: {
         filter: {
           protocol: qNavProtocol.protocol,
-          schema: qNavProtocol.types.qNavLink.schema,
+          schema: qNavProtocol.types.link.schema,
           dataFormat: "application/json",
         },
         // TODO: import proper enum to avoid having to ts-ignore
@@ -113,7 +117,10 @@ export class QNavApi {
     for (const record of recordsRes?.records || []) {
       const data: QNavLink = await record.data.json();
       const id = record.id;
-      recs.push({ record, data, id });
+      // Passing isExternal: !!from because right now the author record is being set to eht requestor's did
+      // https://github.com/TBD54566975/web5-js/blob/cd2425668d31f0f797bfea594dacea0fca50241d/packages/api/src/dwn-api.ts#L275
+      // Issue being tracked here https://github.com/TBD54566975/web5-js/issues/231
+      recs.push({ record, data, id, isExternal: !!from });
     }
     return { status: recordsRes.status, recs };
   }
@@ -139,7 +146,6 @@ export class QNavApi {
       }
       recs = [...recs, ...recordsRes.recs];
     }
-    recs = await this.filterLinkQueryRes(recs);
 
     return { status: recordsRes.status, recs };
   }
@@ -155,7 +161,7 @@ export class QNavApi {
       message: {
         filter: {
           protocol: qNavProtocol.protocol,
-          schema: qNavProtocol.types.qNavFollow.schema,
+          schema: qNavProtocol.types.follow.schema,
           dataFormat: "application/json",
         },
         // TODO: import proper enum to avoid having to ts-ignore
@@ -186,23 +192,6 @@ export class QNavApi {
       return false;
     }
     return true;
-  }
-
-  async filterLinkQueryRes(links: QNavLinkResponse[]) {
-    // Filter out deleted links and return a filtered list of data. Right now not used.
-    const idMap: Map<string, QNavLinkResponse> = new Map();
-    for (const link of links) {
-      if (!idMap.has(link.data.name)) {
-        idMap.set(link.data.name, link)
-      } else if (link.record.author === this.did) {
-        const existingRec = idMap.get(link.data.name);
-        if (existingRec && new Date(link.record.dateCreated) > new Date(existingRec.record.dateCreated)) {
-          idMap.set(link.data.name, link)
-        }
-      }
-    }
-    let recs = Array.from(idMap.values());
-    return recs
   }
 
 }

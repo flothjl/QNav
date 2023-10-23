@@ -12,6 +12,11 @@ export type QNavLink = {
     url: string
 }
 
+export type QNavLinkRequest = {
+    data: QNavLink
+    isPrivate?: boolean
+}
+
 export type QNavFollow = {
     did: string
     nickname?: string
@@ -21,6 +26,7 @@ export type BaseRecordResponse<T> = {
     data: T
     id: string
     record: Record
+    isExternal?: boolean
 }
 
 export type QNavLinkResponse = BaseRecordResponse<QNavLink>
@@ -34,7 +40,7 @@ export type QNavHook = {
     links: QNavLinkResponse[]
     follows: QNavFollowsResponse[]
     queryLinks: () => Promise<boolean>
-    addLink: (value: QNavLink) => Promise<boolean>
+    addLink: (value: QNavLink, isPrivate?: boolean) => Promise<boolean>
     deleteLink: (link: any) => Promise<boolean>
     addFollow: (data: QNavFollow) => Promise<boolean>
     deleteFollow: (follow: any) => Promise<boolean>
