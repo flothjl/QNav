@@ -1,5 +1,5 @@
 export const qNavProtocol = {
-    'protocol': "https://qnavlinks.io/protocol/v0.7",
+    'protocol': "https://qnavlinks.io/protocol/v0.10",
     'published': true,
     'types': {
         'link': {
@@ -7,7 +7,7 @@ export const qNavProtocol = {
             'dataFormats': ["application/json"],
         },
         'privateLink': {
-            'schema': "urn:qNavPrivateLinkSchema",
+            'schema': "urn:qNavLinkSchema",
             'dataFormats': ["application/json"],
         },
         'follow': {
@@ -33,11 +33,6 @@ export const qNavProtocol = {
                 {
                     'who': 'anyone',
                     'can': 'write'
-                },
-                {
-                    'who': 'author',
-                    'of': 'privateLink',
-                    'can': 'read'
                 }
             ] 
         },

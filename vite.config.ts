@@ -39,7 +39,7 @@ export default defineConfig({
     outDir,
     emptyOutDir: true,
     target: 'esnext',
-    sourcemap: true,
+    // sourcemap: true,
     rollupOptions: {
       input: {
         background: resolve(pagesDir, 'background', 'index.ts'),

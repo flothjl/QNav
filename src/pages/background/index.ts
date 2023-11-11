@@ -84,6 +84,7 @@ const omniboxListener = async (qNavApi: QNavApi) => {
         })
       )
   })
+
   chrome.omnibox.onInputEntered.addListener(async (string,) => {
     const linkData = await queryLinks(qNavApi);
     const links = linkData.map((link) => link.data);
@@ -94,7 +95,14 @@ const omniboxListener = async (qNavApi: QNavApi) => {
   });
 };
 
-connect().then(async (qNavApi) => {
-  await omniboxListener(qNavApi);
-})
+chrome.runtime.onStartup.addListener(async () => {
+  connect().then(async (qNavApi) => {
+    await omniboxListener(qNavApi);
+  });
+});
 
+chrome.runtime.onInstalled.addListener(async () => {
+  connect().then(async (qNavApi) => {
+    await omniboxListener(qNavApi);
+  });
+});

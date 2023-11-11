@@ -10,7 +10,7 @@ const Home = () => {
   const qNav = useContext(QNavContext);
   const nameRef = useRef<HTMLInputElement>(null);
   const urlRef = useRef<HTMLInputElement>(null);
-  const isPrivateRef = useRef<HTMLInputElement>(null);
+  const isPublicRef = useRef<HTMLInputElement>(null);
   
   const [nameError, setNameError] = useState<boolean | string>(false);
   const [urlError, setUrlError] = useState<boolean | string>(false);
@@ -32,12 +32,13 @@ const Home = () => {
       nameRef?.current?.value &&
       urlRef?.current?.value
     ) {
+      const isPrivate = !(isPublicRef.current?.checked || false)
       const success = await qNav?.addLink(
         {
           name: nameRef.current.value,
           url: urlRef.current.value
         },
-        isPrivateRef.current?.checked || false
+        isPrivate
       );
       if (success) {
         toast.success("Link saved!");
@@ -68,7 +69,7 @@ const Home = () => {
         <form onSubmit={handleSubmit}>
           <Input ref={nameRef} label="Name:" error={nameError} />
           <Input ref={urlRef} label="URL:" error={urlError} />
-          <Toggle ref={isPrivateRef} label="Private" />
+          <Toggle ref={isPublicRef} label="Public" />
           <button className="w-full rounded-full bg-gradient-to-tr from-orange-400 to-cyan-600 px-10 py-1 text-base hover:to-cyan-400">
             Save QNav!
           </button>

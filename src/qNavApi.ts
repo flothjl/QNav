@@ -65,7 +65,7 @@ export class QNavApi {
         protocol: qNavProtocol.protocol,
         protocolPath,
         schema,
-        published: true
+        published: !isPrivate
       },
     });
     return recordRes;
