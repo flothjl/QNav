@@ -1,29 +1,42 @@
 export const qNavProtocol = {
-    'protocol': "https://qnavprotocol",
+    'protocol': "https://qnavlinks.io/protocol/v0.10",
+    'published': true,
     'types': {
-        'qNavLink': {
-            'schema': "qNavLinkSchema",
+        'link': {
+            'schema': "urn:qNavLinkSchema",
             'dataFormats': ["application/json"],
         },
-        'qNavFollow': {
-            'schema': "qNavFollowSchema",
+        'privateLink': {
+            'schema': "urn:qNavLinkSchema",
+            'dataFormats': ["application/json"],
+        },
+        'follow': {
+            'schema': "urn:qNavFollowSchema",
             'dataFormats': ["application/json"],
         }
     },
     'structure': {
-        'qNavLink': {
+        'link': {
+            '$actions': [
+                {
+                    'who': 'anyone',
+                    'can': 'read'
+                },
+                {
+                    'who': 'anyone',
+                    'can': 'write'
+                }
+            ]
+        },
+        'privateLink': {
             '$actions': [
                 {
                     'who': 'anyone',
                     'can': 'write'
-                },
-                {
-                    'who': 'anyone',
-                    'can': 'read'
                 }
-            ]
+            ] 
         },
-        'qNavFollow': {
+        'follow': {
             '$actions': [
                 {
                     'who': 'anyone',
@@ -31,7 +44,7 @@ export const qNavProtocol = {
                 },
                 {
                     'who': 'author',
-                    'of': 'qNavFollow',
+                    'of': 'follow',
                     'can': 'read'
                 }
             ]

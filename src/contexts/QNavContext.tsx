@@ -1,6 +1,10 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { QNavHook } from "../types";
+import { useQNav } from "@src/hooks/useQNav";
 
-const QNavContext = createContext<QNavHook>({} as QNavHook);
+export const QNavContext = createContext<QNavHook>({} as QNavHook);
 
-export default QNavContext;
+export const QNavContextProvider = ({ children }: React.PropsWithChildren) => {
+  const qNav = useQNav();
+  return <QNavContext.Provider value={qNav}>{children}</QNavContext.Provider>;
+};

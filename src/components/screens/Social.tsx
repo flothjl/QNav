@@ -1,6 +1,6 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import QNavContext from "@contexts/QNavContext";
+import { QNavContext } from "@contexts/QNavContext";
 import QNavRecords from "@components/molecules/QNavRecords";
 import { isValidDid } from "@src/util";
 import Input from "@components/atoms/Input";
