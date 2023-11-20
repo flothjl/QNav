@@ -43,7 +43,9 @@ export class QNavApi {
   }
 
   static async create() {
-    const web5: Web5Connection = await Web5.connect({});
+    const web5: Web5Connection = await Web5.connect({
+      sync: "10s"
+    });
     web5.web5 && await QNavApi.configureProtocol(web5.web5, qNavProtocol);
     return new QNavApi(web5);
   }

@@ -1,6 +1,6 @@
 import { QNavApi } from "@src/qNavApi";
 import { QNavLink, QNavLinkResponse } from "../../types";
-import { findLink } from "./util";
+import { findLink, escapeXml, calculateSimilarity } from "./util";
 
 const connect = async () => {
   const qNavApi = await QNavApi.create();
@@ -14,16 +14,6 @@ const queryLinks = async (qNavApi: QNavApi) => {
   }
   return links?.recs || [];
 };
-
-// Function to calculate similarity score between two strings
-function calculateSimilarity(str1: string, str2: string) {
-  const set1 = new Set(str1.toLowerCase());
-  const set2 = new Set(str2.toLowerCase());
-  const intersectionSize = new Set([...set1].filter(x => set2.has(x))).size;
-  const unionSize = new Set([...set1, ...set2]).size;
-  const similarity = intersectionSize / unionSize;
-  return similarity;
-}
 
 const suggestLink = (searchString: string, links: QNavLink[]) => {
   const regex = new RegExp(searchString, 'i');
@@ -45,25 +35,6 @@ const suggestLink = (searchString: string, links: QNavLink[]) => {
   // Return the top 4 closest matches
   return matchingObjects.slice(0, 4);
 
-}
-
-function escapeXml(xmlString: string): string {
-  return xmlString.replace(/[<>&'"]/g, (char) => {
-    switch (char) {
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '&':
-        return '&amp;';
-      case "'":
-        return '&apos;';
-      case '"':
-        return '&quot;';
-      default:
-        return char;
-    }
-  });
 }
 
 const omniboxListener = async (qNavApi: QNavApi) => {
@@ -95,14 +66,7 @@ const omniboxListener = async (qNavApi: QNavApi) => {
   });
 };
 
-chrome.runtime.onStartup.addListener(async () => {
-  connect().then(async (qNavApi) => {
-    await omniboxListener(qNavApi);
-  });
-});
-
-chrome.runtime.onInstalled.addListener(async () => {
-  connect().then(async (qNavApi) => {
-    await omniboxListener(qNavApi);
-  });
-});
+connect().then(async (qNavApi) => {
+  console.log('service worker connected')
+  omniboxListener(qNavApi);
+})
