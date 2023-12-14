@@ -53,8 +53,8 @@ export function useQNav(): QNavHook {
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
-    if (sendStatus.code !== 202) {
+    const sendStatus = await record?.record?.send(qNavApi?.did || "");
+    if (sendStatus?.status.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
     queryFollows();
@@ -67,8 +67,8 @@ export function useQNav(): QNavHook {
     if (record?.status.code !== 202) {
       return false;
     }
-    const { status: sendStatus } = await record?.record?.send(qNavApi?.did || "");
-    if (sendStatus.code !== 202) {
+    const sendStatus = await record?.record?.send(qNavApi?.did || "");
+    if (sendStatus?.status.code !== 202) {
       console.warn("unable to send record to remote dwn");
     }
     queryLinks();

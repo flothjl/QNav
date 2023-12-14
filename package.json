@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@web5/api": "^0.8.1",
+    "@web5/api": "^0.8.3",
     "clsx": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -40,7 +40,7 @@
     "rollup-plugin-copy": "^3.4.0",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2",
-    "vite": "^4.3.2",
+    "vite": "^4.5.1",
     "vite-plugin-node-polyfills": "^0.12.0"
   }
 }
