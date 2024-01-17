@@ -1,7 +1,6 @@
-import { Web5 } from "@web5/api";
+import { Web5, RecordsWriteResponse } from "@web5/api";
 import { QNavLinkResponse, QNavFollowsResponse, QNavFollow, QNavLink, Web5Connection, QNavLinkRequest } from "./types";
 import { qNavProtocol } from "./protocols";
-import { RecordsWriteResponse } from "@web5/api/dist/types/dwn-api";
 
 export class QNavApi {
   did: string;
