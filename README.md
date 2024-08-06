@@ -1,3 +1,6 @@
+> [!WARNING]
+> This is a POC leveraging [Web5](https://github.com/TBD54566975/web5-js) which is still under active development. It is likely this will break.
+
 # QNav Links
 A lightweight chrome extension for quick navigation. This extension leverages chrome's omnibox feature and allows users to save important or highly used sites and easily navigate to them.
 
